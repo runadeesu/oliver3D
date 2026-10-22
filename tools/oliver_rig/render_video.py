@@ -90,6 +90,9 @@ def hand_center(side):
     for f in ("Thumb", "Index", "Middle", "Ring", "Pinky"):
         pts.append(arm.pose.bones[f"{S}Hand{f}3"].tail)
     return np.mean([np.array((arm.matrix_world @ p).to_tuple()) for p in pts], axis=0)
+_bb = np.array([(mesh.matrix_world @ Vector(c)).to_tuple() for c in mesh.bound_box])
+body_c = (_bb.min(0) + _bb.max(0)) / 2          # the models stand with their feet on z = 0
+body_h = _bb[:, 2].max() - _bb[:, 2].min()
 jaw_c = np.array((arm.matrix_world @ arm.pose.bones["Jaw"].head).to_tuple())
 mouth_c = np.array([jaw_c[0], -0.11, jaw_c[2] - 0.06])
 def render(cen, scale, w, h, direction=None, az=0, el=0, name="p", cut=None):
@@ -115,7 +118,7 @@ for fr in range(f0, f1 + 1, step):
     sc.frame_set(fr)
     seg, title, sub = caption(fr)
     if seg not in body_cache:
-        body_cache[seg] = render((0, 0, 0), 2.1, 640, 720, az=0, el=0, name="body")
+        body_cache[seg] = render(body_c, body_h * 1.24, 640, 720, az=0, el=0, name="body")
     body = body_cache[seg]
     if seg in ("Hands_OpenCloseOpen", "Fingers_Individual", "Point_Peace"):
         # film every hand from the side that faces away from the body (palm side if the palm points outwards, else the back of the hand);
