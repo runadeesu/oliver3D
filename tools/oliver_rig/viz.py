@@ -83,3 +83,13 @@ def build_debug_object(co, faces, uv=None, colors=None, name="dbg"):
     ob = bpy.data.objects.new(name, me)
     bpy.context.scene.collection.objects.link(ob)
     return ob
+
+
+def aim_dir(cam, center, scale, direction, up=(0, 0, 1)):
+    """Camera placed along `direction` (unit vector from the target to the camera)."""
+    d = Vector(direction).normalized()
+    c = Vector(center)
+    cam.location = c + d * 5.0
+    cam.rotation_euler = (c - cam.location).to_track_quat("-Z", "Y").to_euler()
+    if cam.data.type == "ORTHO":
+        cam.data.ortho_scale = scale

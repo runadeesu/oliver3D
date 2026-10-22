@@ -220,7 +220,8 @@ def reintegrate(co, faces, uv, mat, mask, carved):
     uv2 = np.concatenate([uv[~fm], carved["tuv"]])
     mat2 = np.concatenate([mat[~fm], np.zeros(len(tris), mat.dtype)])
     tag = np.concatenate([np.zeros(len(keep_f), np.int8), (carved["tmat"] == 1).astype(np.int8)])
-    return co2, faces2, uv2, mat2, tag
+    hand_vids = np.unique(newidx[carved["tris"]])
+    return co2, faces2, uv2, mat2, tag, hand_vids
 
 
 def fix_wall_uvs(co, faces, uv, tag, ref_faces_mask):

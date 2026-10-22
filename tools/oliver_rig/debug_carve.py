@@ -14,7 +14,7 @@ for side, sgn in (("R", -1), ("L", 1)):
     m, seed, col = hands_seg.segment_hand(co, vc, adj, sgn, h["center"], h["radius"], h["shoulder"])
     res = hands_digits.analyze_hand(co, F, m, adj, side, finger_tips=cfg.get("finger_tips", {}).get(side))
     carved = hands_carve.carve_hand(co, F, uv, m, res, log_prefix=f"{tag}{side}")
-    co, F, uv, mat, wtag = hands_carve.reintegrate(co, F, uv, mat, m, carved)
+    co, F, uv, mat, wtag, _hv = hands_carve.reintegrate(co, F, uv, mat, m, carved)
     uv = hands_carve.fix_wall_uvs(co, F, uv, wtag, np.ones(len(F), bool))
     log(tag, side, "done", round(t(), 1), "s; verts", len(co), "faces", len(F), "wall faces", int(wtag.sum()))
     # new arrays have extra faces appended -> vertex colours for debug: reuse nearest original colour
