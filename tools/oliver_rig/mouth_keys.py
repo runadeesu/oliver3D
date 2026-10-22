@@ -107,8 +107,17 @@ def build_keys(F):
     """Returns dict name -> delta (N,3) float32 relative to the basis."""
     keys = {}
     keys["jawOpen"] = jaw_delta(F, 1.0)
+    pk = F.asm["pocket"]
+    k_mid = min(3, pk["ids_up"].shape[1] - 1)
+    ids_mid = pk["ids_up"][:, k_mid]
     for name, r in RECIPES.items():
         d = jaw_delta(F, r["jaw"]) + lip_delta(F, r)
+        # narrowing visemes (U, O): the teeth / tongue follow the narrowed cavity sideways, otherwise the outermost teeth poke out of the corners
+        x0 = F.co[ids_mid, 0]
+        x1 = x0 + d[ids_mid, 0]
+        s = (x1.max() - x1.min()) / (x0.max() - x0.min())
+        if s < 1.0:
+            d[F.free, 0] += (s - 1.0) * (F.co[F.free, 0] - F.xm)
         keys[name] = d
     # mouthClose: press the lips together; lifts the lower lip band by a small amount so that a slightly open jaw
     # (jawOpen <= ~0.12) is sealed, otherwise the lips are just pressed (lower lip forward by 0.4 mm so there is no z-fight)

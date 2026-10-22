@@ -33,9 +33,10 @@ W[:nskin] = Wk
 # explicit hand weights (palm / fingers / thumb) blended in across the wrist
 bone_pos = {b["name"]: (b["head"], b["tail"]) for b in bones}
 bone_index = {b["name"]: i for i, b in enumerate(bones)}
+skin_graph = sw.mesh_graph(CO[:nskin].astype(np.float64), FA[:nsf])
 for side, Side in (("L", "Left"), ("R", "Right")):
     vids = d[f"hand_{side}"]
-    Wx, gate = hw.hand_weights(CO, vids, Side, hands[side], bone_pos, bone_index, len(bones))
+    Wx, gate = hw.hand_weights(CO, vids, Side, hands[side], bone_pos, bone_index, len(bones), graph=skin_graph)
     cur = W[vids]
     W[vids] = cur * (1 - gate[:, None]) + Wx * gate[:, None]
 mouth_mask = PART > 0

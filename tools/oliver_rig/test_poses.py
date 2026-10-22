@@ -22,7 +22,7 @@ hc = {s: np.array(hand_center(s)) + np.array(hands[s]["a"]) * 0.08 for s in "LR"
 az = {"R": 270, "L": 90}
 rp.reset_pose(arm)
 def shot_dir(name, center, scale, direction):
-    viz.aim_dir(cam, center, scale, direction)
+    viz.aim_dir(cam, center, scale, direction, cut=0.12)
     sc.render.filepath = f"{outdir}/{name}.png"
     bpy.ops.render.render(write_still=True)
 nR = np.array(hands["R"]["n"]); aR = np.array(hands["R"]["a"]); uR = np.array(hands["R"]["u"])

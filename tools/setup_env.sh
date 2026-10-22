@@ -20,3 +20,8 @@ fi
 export OLIVER_PYLIBS="$WORKDIR/pylibs"
 export BLENDER="$WORKDIR/blender/blender"
 export BPY
+# --- optional: face correction from a reference photo (tools/run_face_fix.sh) -------------------------------------------
+# python3 -m pip install --target "$WORKDIR/mplibs" mediapipe          # brings numpy, opencv-contrib, pillow
+# curl -L -o "$WORKDIR/face_landmarker.task" https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
+export OLIVER_MPLIBS="$WORKDIR/mplibs"
+export OLIVER_FACE_MODEL="$WORKDIR/face_landmarker.task"

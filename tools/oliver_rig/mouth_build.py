@@ -167,21 +167,47 @@ def build_pocket(cut, frame):
     Au = local_uv_fit(co, faces, uv, up, +1, frame)
     Al = local_uv_fit(co, faces, uv, lo, -1, frame)
     vuv = np.zeros((len(allco), 2), np.float32)
-    for (side, i, k), vid in zip(meta, range(base, base + len(meta))):
-        if side != 0 and k <= LIP_ROWS:
-            x, z = allco[vid, 0], allco[vid, 2]
-            vuv[vid] = np.array([x, z, 1.0]) @ (Au if side > 0 else Al)
-    # rim vertices already carry skin uvs on their skin faces: take uv from an adjacent skin corner
-    tuv = np.zeros((len(tris), 3, 2), np.float32)
-    # per-corner uv lookup for rim verts (upper rim from upper faces, lower rim from lower faces)
+
     def rim_uv(vids):
-        d = {}
+        """uv of every rim (crease) vertex. A vertex on a UV seam carries several corner uvs: walk along the chain from its middle
+        and pick, at every vertex, the corner uv closest to the previous one so the whole rim stays inside one chart."""
+        cand = {int(v): [] for v in vids}
         fm = np.isin(faces, vids)
         for fi, k in zip(*np.where(fm)):
             v = int(faces[fi, k])
-            d.setdefault(v, uv[fi, k])
-        return d
+            u = tuple(np.round(uv[fi, k], 6))
+            if u not in cand[v]:
+                cand[v].append(u)
+        order = list(range(len(vids) // 2, len(vids))) + list(range(len(vids) // 2 - 1, -1, -1))
+        out, prev = {}, None
+        for i in order:
+            v = int(vids[i])
+            if i == len(vids) // 2 - 1:
+                prev = out[int(vids[len(vids) // 2])]          # restart the left half from the middle vertex
+            c = cand[v] or [(0.0, 0.0)]
+            if prev is None:
+                out[v] = c[0]
+            else:
+                out[v] = min(c, key=lambda u: (u[0] - prev[0]) ** 2 + (u[1] - prev[1]) ** 2)
+            prev = out[v]
+        return {v: np.array(u, np.float32) for v, u in out.items()}
     ru, rl = rim_uv(up), rim_uv(lo)
+    # Meshy atlases split the face into several UV charts, so one global linear fit can straddle charts. Anchor every
+    # lip-band vertex on the uv of its own rim vertex (same chart as the skin it continues) and add only a small,
+    # clipped offset from the fitted gradient.
+    UV_CLIP = 0.004
+    for (side, i, k), vid in zip(meta, range(base, base + len(meta))):
+        if side != 0 and k <= LIP_ROWS:
+            x, z = allco[vid, 0], allco[vid, 2]
+            rv = int(up[i]) if side > 0 else int(lo[i])
+            A = Au if side > 0 else Al
+            anchor = np.array((ru if side > 0 else rl).get(rv, (0, 0)), np.float32)
+            delta = np.array([x, z, 1.0]) @ A - np.array([allco[rv, 0], allco[rv, 2], 1.0]) @ A
+            vuv[vid] = anchor + np.clip(delta, -UV_CLIP, UV_CLIP)
+        elif side != 0:
+            rv = int(up[i]) if side > 0 else int(lo[i])
+            vuv[vid] = (ru if side > 0 else rl).get(rv, (0, 0))
+    tuv = np.zeros((len(tris), 3, 2), np.float32)
     for fi, t in enumerate(tris):
         for k, v in enumerate(t):
             v = int(v)

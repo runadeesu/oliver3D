@@ -44,5 +44,21 @@
       -45.0,
       35.00000000000007
     ]
+  },
+  "face": {
+    "beard": true,
+    "sigma_mm": 3.5,
+    "strength": 1.0,
+    "tone_match": 0.35,
+    "hp_tau": 35.0,
+    "hp_floor": 1.0,
+    "skin_hue_max": 30.0,
+    "photo_sharpen": 0.0,
+    "edge_fade_mm": [
+      1.0,
+      6.0
+    ],
+    "chroma_gain": 0.6,
+    "top_cut_mm": 10.0
   }
 }

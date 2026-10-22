@@ -44,5 +44,16 @@
       -45.0,
       27.000000000000064
     ]
+  },
+  "face": {
+    "beard": false,
+    "sigma_mm": 1.6,
+    "strength": 1.0,
+    "tone_match": 0.7,
+    "hp_tau": 35.0,
+    "hp_floor": 0.25,
+    "photo_sharpen": 0.8,
+    "chroma_gain": 0.8,
+    "top_cut_mm": 14.0
   }
 }

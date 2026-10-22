@@ -92,10 +92,10 @@ def hand_center(side):
     return np.mean([np.array((arm.matrix_world @ p).to_tuple()) for p in pts], axis=0)
 jaw_c = np.array((arm.matrix_world @ arm.pose.bones["Jaw"].head).to_tuple())
 mouth_c = np.array([jaw_c[0], -0.11, jaw_c[2] - 0.06])
-def render(cen, scale, w, h, direction=None, az=0, el=0, name="p"):
+def render(cen, scale, w, h, direction=None, az=0, el=0, name="p", cut=None):
     sc.render.resolution_x, sc.render.resolution_y = w, h
     if direction is not None:
-        viz.aim_dir(cam, cen, scale, direction)
+        viz.aim_dir(cam, cen, scale, direction, cut=cut)
     else:
         viz.aim_camera(cam, cen, scale, az, el)
     sc.render.filepath = os.path.join(tmp, f"{name}.png")
@@ -118,9 +118,14 @@ for fr in range(f0, f1 + 1, step):
         body_cache[seg] = render((0, 0, 0), 2.1, 640, 720, az=0, el=0, name="body")
     body = body_cache[seg]
     if seg in ("Hands_OpenCloseOpen", "Fingers_Individual", "Point_Peace"):
-        p1 = render(hand_center("R"), 0.34, 640, 360, direction=nR, name="p1")
-        p2 = render(hand_center("L"), 0.34, 640, 360, direction=nL, name="p2")
-        lab1, lab2 = "Right hand (palm side)", "Left hand (palm side)"
+        # film every hand from the side that faces away from the body (palm side if the palm points outwards, else the back of the hand);
+        # clip anything closer than 12 cm to the camera so sleeves / hems never block the view
+        dR = nR if nR[0] < 0 else -nR
+        dL = nL if nL[0] > 0 else -nL
+        p1 = render(hand_center("R"), 0.34, 640, 360, direction=dR, name="p1", cut=0.12)
+        p2 = render(hand_center("L"), 0.34, 640, 360, direction=dL, name="p2", cut=0.12)
+        lab1 = "Right hand (%s)" % ("palm side" if dR is nR else "back of hand")
+        lab2 = "Left hand (%s)" % ("palm side" if dL is nL else "back of hand")
     else:
         p1 = render(mouth_c, 0.17, 640, 360, az=0, el=0, name="p1")
         p2 = render(mouth_c, 0.17, 640, 360, az=40, el=8, name="p2")

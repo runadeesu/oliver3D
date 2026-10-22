@@ -2,6 +2,10 @@
 from common import *
 
 
+FUSED_THICKNESS_SCALE = 0.3
+GEO_TAU = 0.8
+
+
 def smoothstep(e0, e1, x):
     t = np.clip((np.asarray(x) - e0) / (e1 - e0), 0, 1)
     return t * t * (3 - 2 * t)
@@ -30,27 +34,58 @@ def chain_params(P, J):
     return best_d, best_s, cum
 
 
-def hand_weights(co, vids, side_name, hand, bone_pos, bone_index, nbones):
+def hand_weights(co, vids, side_name, hand, bone_pos, bone_index, nbones, graph=None):
     """Returns (rows (len(vids), nbones), gate (len(vids),)) where gate = how much the explicit hand weights replace the
     generic body weights (0 at the forearm side of the wrist, 1 in the hand)."""
     P = co[vids].astype(np.float64)
     K = len(vids)
     Wx = np.zeros((K, nbones), np.float32)
     S = side_name
+    n_palm = np.array(hand["n"], float)
+    n_palm /= np.linalg.norm(n_palm)
     fingers = ["Index", "Middle", "Ring", "Pinky"]
     comp_sum = np.zeros(K)
     memb = {}
     gates = {}
     arcs = {}
+    seeds = {}
     for fi, f in enumerate(fingers):
         J = np.array([bone_pos[f"{S}Hand{f}1"][0], bone_pos[f"{S}Hand{f}2"][0], bone_pos[f"{S}Hand{f}3"][0], bone_pos[f"{S}Hand{f}3"][1]])
-        d, s, cum = chain_params(P, J)
-        r = hand["digits"][f.lower()]["radius"]
+        dg = hand["digits"][f.lower()]
+        if dg.get("fused"):
+            # fused (webbed) fingers are flat paddles whose synthesized axis does not sit mid-thickness:
+            # measure the distance mostly across the finger (palm-plane), not through its thickness
+            k = FUSED_THICKNESS_SCALE
+            Tm = np.eye(3) + (k - 1.0) * np.outer(n_palm, n_palm)
+            d, s, cum = chain_params(P @ Tm, J @ Tm)
+        else:
+            d, s, cum = chain_params(P, J)
+        r = dg["radius"]
         r = max(r, 0.0085)
-        m = 1 - smoothstep(1.15 * r, 2.0 * r, d)
+        wide = 1.6 if dg.get("fused") else 1.0
+        m = 1 - smoothstep(1.15 * wide * r, 2.0 * wide * r, d)
         gate = smoothstep(-0.012, 0.006, s)
         memb[f] = m * gate
         arcs[f] = (s, cum)
+        if dg.get("fused"):
+            core = (d < 0.75 * r) & (s > 0.0)
+            if core.sum() < 8:
+                core = np.zeros(K, bool)
+                core[np.argsort(np.where(s > 0, d, np.inf))[:8]] = True
+            seeds[f] = vids[core]
+    if graph is not None and len(seeds) == len(fingers):
+        # Fused fingers: the carved slits only separate the flesh through the mesh topology (the two walls of a slit are
+        # ~1 mm apart, so Euclidean distance to the finger axes cannot tell them apart). Partition by geodesic distance
+        # to each finger's core so every slit wall follows its own finger, blending only where the fingers are joined.
+        from scipy.sparse.csgraph import dijkstra
+        G = np.stack([dijkstra(graph, directed=False, indices=seeds[f], min_only=True, limit=0.2)[vids] for f in fingers], 1)
+        G = np.where(np.isfinite(G), G, 1.0)
+        tau = GEO_TAU * np.mean([max(hand["digits"][f.lower()]["radius"], 0.0085) for f in fingers])
+        wg = np.exp(-(((G - G.min(1, keepdims=True)) / tau) ** 2))
+        wg /= wg.sum(1, keepdims=True)
+        m_any = np.max(np.stack([memb[f] for f in fingers], 1), 1)
+        for fi, f in enumerate(fingers):
+            memb[f] = m_any * wg[:, fi]
     # thumb
     Jt = np.array([bone_pos[f"{S}HandThumb1"][0], bone_pos[f"{S}HandThumb2"][0], bone_pos[f"{S}HandThumb3"][0], bone_pos[f"{S}HandThumb3"][1]])
     dt, st, cumt = chain_params(P, Jt)

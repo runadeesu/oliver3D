@@ -47,6 +47,7 @@ def aim_camera(cam, center, scale, azimuth_deg=0.0, elevation_deg=0.0, dist=5.0)
     """azimuth 0 = camera at -Y looking +Y (sees the character's front); 90 = camera at +X."""
     a, e = math.radians(azimuth_deg), math.radians(elevation_deg)
     c = Vector(center)
+    cam.data.clip_start = 0.01
     off = Vector((math.sin(a) * math.cos(e), -math.cos(a) * math.cos(e), math.sin(e))) * dist
     cam.location = c + off
     cam.rotation_euler = (c - cam.location).to_track_quat("-Z", "Y").to_euler()
@@ -85,10 +86,12 @@ def build_debug_object(co, faces, uv=None, colors=None, name="dbg"):
     return ob
 
 
-def aim_dir(cam, center, scale, direction, up=(0, 0, 1)):
-    """Camera placed along `direction` (unit vector from the target to the camera)."""
+def aim_dir(cam, center, scale, direction, up=(0, 0, 1), cut=None):
+    """Camera placed along `direction` (unit vector from the target to the camera).
+    cut: clip everything nearer to the camera than `cut` metres in front of the target (removes sleeves/body in the way)."""
     d = Vector(direction).normalized()
     c = Vector(center)
+    cam.data.clip_start = 5.0 - cut if cut else 0.01
     cam.location = c + d * 5.0
     cam.rotation_euler = (c - cam.location).to_track_quat("-Z", "Y").to_euler()
     if cam.data.type == "ORTHO":
