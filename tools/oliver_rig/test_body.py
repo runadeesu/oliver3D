@@ -7,6 +7,9 @@ from mathutils import Quaternion
 outdir = sys.argv[sys.argv.index("--") + 1]
 os.makedirs(outdir, exist_ok=True)
 arm, mesh = rp.find_rig()
+_bb = np.array([(mesh.matrix_world @ Vector(c)).to_tuple() for c in mesh.bound_box])
+body_center = tuple(((_bb.min(0) + _bb.max(0)) / 2).tolist())      # models stand with their feet on z = 0
+body_scale = float(_bb[:, 2].max() - _bb[:, 2].min()) * 1.3
 sc = viz.make_scene(900, color_type="TEXTURE", light="FLAT")
 cam = viz.get_camera(sc)
 
@@ -33,8 +36,8 @@ for name, ops in poses.items():
     for nm, ax, deg in ops:
         rot(nm, ax, deg)
     bpy.context.view_layer.update()
-    shot(f"body_{name}_front", (0, 0, 0), 2.2, 0)
-    shot(f"body_{name}_side", (0, 0, 0), 2.2, 90)
+    shot(f"body_{name}_front", body_center, body_scale, 0)
+    shot(f"body_{name}_side", body_center, body_scale, 90)
 rp.reset_pose(arm)
 # mouth via shape keys and via jaw bone
 fr_z = None

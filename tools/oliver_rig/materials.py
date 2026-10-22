@@ -41,11 +41,15 @@ def make_skin_material(name, tex_dir, prefix):
         return n
     tb = tex(base, "sRGB", (-500, 300), "BaseColor")
     nt.links.new(tb.outputs["Color"], bsdf.inputs["Base Color"])
-    tm = tex(mr, "Non-Color", (-700, -50), "MetallicRoughness")
-    sep = nt.nodes.new("ShaderNodeSeparateColor"); sep.location = (-380, -50)
-    nt.links.new(tm.outputs["Color"], sep.inputs["Color"])
-    nt.links.new(sep.outputs["Green"], bsdf.inputs["Roughness"])
-    nt.links.new(sep.outputs["Blue"], bsdf.inputs["Metallic"])
+    if os.path.exists(mr):
+        tm = tex(mr, "Non-Color", (-700, -50), "MetallicRoughness")
+        sep = nt.nodes.new("ShaderNodeSeparateColor"); sep.location = (-380, -50)
+        nt.links.new(tm.outputs["Color"], sep.inputs["Color"])
+        nt.links.new(sep.outputs["Green"], bsdf.inputs["Roughness"])
+        nt.links.new(sep.outputs["Blue"], bsdf.inputs["Metallic"])
+    else:                                              # sources without roughness / metallic maps (remade Meshy exports)
+        bsdf.inputs["Roughness"].default_value = 0.6
+        bsdf.inputs["Metallic"].default_value = 0.0
     tn = tex(nrm, "Non-Color", (-700, -400), "Normal")
     nm = nt.nodes.new("ShaderNodeNormalMap"); nm.location = (-300, -400)
     nt.links.new(tn.outputs["Color"], nm.inputs["Color"])
@@ -61,19 +65,6 @@ def make_flat_material(name, color, rough=0.5, spec=0.5):
     b.inputs["Roughness"].default_value = rough
     mat.diffuse_color = (*color, 1)
     return mat
-
-
-def glasses_materials():
-    """Frame (thin gold wire) and lens (dark tinted glass) for rebuilt glasses; material slots 4 and 5."""
-    fr = make_flat_material("Glasses_Frame", (0.62, 0.45, 0.20), 0.28)
-    fr.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
-    ln = make_flat_material("Glasses_Lens", (0.012, 0.018, 0.04), 0.05)
-    b = ln.node_tree.nodes["Principled BSDF"]
-    b.inputs["Metallic"].default_value = 0.0
-    for k in ("Specular IOR Level", "Specular"):
-        if k in b.inputs:
-            b.inputs[k].default_value = 1.0
-    return [fr, ln]
 
 
 def mouth_materials():

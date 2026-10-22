@@ -42,13 +42,6 @@ for side, Side in (("L", "Left"), ("R", "Right")):
 mouth_mask = PART > 0
 w_jaw = fld.w_jaw
 W = sw.apply_jaw(W, bones, w_jaw, PART, mouth_mask, co=CO, z_mouth=fr.z0)
-# rebuilt glasses (material slots 4/5) are rigid on the head
-gl_faces = FA[MAT >= 4]
-if len(gl_faces):
-    gl_v = np.unique(gl_faces)
-    W[gl_v] = 0
-    W[gl_v, bone_index["Head"]] = 1.0
-    log("glasses vertices bound to Head:", len(gl_v))
 log("weights done", round(t(), 1), "rows with zero weight:", int((W.sum(1) < 0.5).sum()))
 # ---- blender objects
 for o in list(bpy.data.objects):
@@ -58,10 +51,6 @@ skin_mat = mtl.make_skin_material(f"{prefix}_Skin", tex_dir, prefix)
 me.materials.append(skin_mat)
 for m_ in mtl.mouth_materials():
     me.materials.append(m_)
-has_glasses = bool((MAT >= 4).any())
-if has_glasses:
-    for m_ in mtl.glasses_materials():
-        me.materials.append(m_)
 ob = bpy.data.objects.new(prefix, me)
 bpy.context.scene.collection.objects.link(ob)
 # vertex groups

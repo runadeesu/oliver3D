@@ -201,7 +201,7 @@ def carve_hand(co, faces, uv, mask, res, depth_frac=0.80, th_tip=0.0042, th_web=
         for i in range(len(tris)):
             loc, nor, idx, dist = cb.find_nearest(Vector(cen[i]), 3e-5)
             onwall[i] = idx is not None
-        wall = onwall & (tmat != 2)
+        wall = (onwall | (tmat == 1)) & (tmat != 2)       # faces that the boolean took over from the cutter carry its material index 1
         # quality: cut walls that float in the air (far from the hand surface) mean the solver misclassified inside / outside
         stray = 0
         for c in cen[wall]:
@@ -234,7 +234,7 @@ def carve_hand(co, faces, uv, mask, res, depth_frac=0.80, th_tip=0.0042, th_web=
     return dict(P_old=P, F_old=F_, uv_old=huv, used=used, P_new=Pn, tris=tris[keep], tuv=tuv[keep], tmat=tmat2[keep], remap=remap)
 
 
-def reintegrate(co, faces, uv, mat, mask, carved):
+def reintegrate(co, faces, uv, mat, mask, carved, prev_tag=None):
     """Replace the masked hand faces of the full mesh with the carved result; returns new (co, faces, uv, mat, tag)."""
     fm = mask[faces].all(1)
     Pn = carved["P_new"].astype(np.float32)
@@ -255,14 +255,16 @@ def reintegrate(co, faces, uv, mat, mask, carved):
     faces2 = np.concatenate([keep_f, tris])
     uv2 = np.concatenate([uv[~fm], carved["tuv"]])
     mat2 = np.concatenate([mat[~fm], np.zeros(len(tris), mat.dtype)])
-    tag = np.concatenate([np.zeros(len(keep_f), np.int8), (carved["tmat"] == 1).astype(np.int8)])
+    old_tag = np.zeros(len(keep_f), np.int8) if prev_tag is None else prev_tag[~fm]       # wall tags of an earlier hand survive
+    tag = np.concatenate([old_tag, (carved["tmat"] == 1).astype(np.int8)])
     hand_vids = np.unique(newidx[carved["tris"]])
     return co2, faces2, uv2, mat2, tag, hand_vids
 
 
-def fix_wall_uvs(co, faces, uv, tag, ref_faces_mask):
-    """Give carved wall faces valid UVs from the nearest original (non-wall) surface."""
-    wall = np.where(tag == 1)[0]
+def fix_wall_uvs(co, faces, uv, tag, ref_faces_mask, wall_faces_mask=None):
+    """Give carved wall faces valid UVs from the nearest original (non-wall) surface of the same hand
+    (ref_faces_mask: faces that may serve as colour source, wall_faces_mask: wall faces to repair)."""
+    wall = np.where((tag == 1) & (np.ones(len(tag), bool) if wall_faces_mask is None else wall_faces_mask))[0]
     if len(wall) == 0:
         return uv
     ref = np.where((tag == 0) & ref_faces_mask)[0]
@@ -292,9 +294,46 @@ def fix_wall_uvs(co, faces, uv, tag, ref_faces_mask):
             b0 = 1 - b1 - b2
             out.append(b0 * uv2[0] + b1 * uv2[1] + b2 * uv2[2])
         out = np.array(out)
-        if np.abs(out - out.mean(0)).max() > 0.01:       # corners fell on different UV islands -> tiny triangle at the centroid
-            c = out.mean(0) if np.abs(out - out[0]).max() < 0.05 else out[0]
+        if np.abs(out - out.mean(0)).max() > 0.01:       # corners fell on different UV islands -> tiny triangle at the centroid (UV of the nearest skin point, never a mean across islands)
+            v0, v1, v2 = tri
+            sol, *_ = np.linalg.lstsq(np.stack([v1 - v0, v2 - v0], 1), np.array(loc) - v0, rcond=None)
+            c = (1 - sol.sum()) * tuv[0] + sol[0] * tuv[1] + sol[1] * tuv[2]
             e = 0.0006
             out = c + np.array([[-e, -e], [e, -e], [0, e]])
         uv[fi] = out
     return uv
+
+
+def repair_gap_uvs(co, faces, uv, wall, hand_vids, tex, dmax=0.004):
+    """The finger gaps of a fused source hand are painted with background / shadow colours in the base-colour texture; once the slits
+    are cut these faces become visible next to the new walls. Hand faces within `dmax` of a wall face whose texel is not skin coloured
+    (and wall faces whose texel is not skin coloured or whose UVs span a large texture area) get the UV of the nearest skin coloured
+    hand face (a tiny triangle, i.e. a flat skin colour)."""
+    from scipy.spatial import cKDTree
+    H, W = tex.shape[:2]
+    hv = np.zeros(len(co), bool)
+    hv[hand_vids] = True
+    hand = hv[faces].all(1)
+
+    def texel(u):
+        return tex[np.clip(((1.0 - u[:, 1]) * H).astype(int), 0, H - 1), np.clip((u[:, 0] * W).astype(int), 0, W - 1)].astype(int)
+    cuv = uv.mean(1)
+    px = texel(cuv)
+    skin = (px[:, 0] > px[:, 1]) & (px[:, 1] > px[:, 2]) & (px[:, 0] > 120)
+    cen = co[faces].mean(1)
+    wid = np.where(wall)[0]
+    if len(wid) == 0:
+        return uv, 0
+    near_wall = cKDTree(cen[wid]).query(cen)[0] < dmax
+    spread = (uv.max(1) - uv.min(1)).max(1)
+    cand = hand & (((~wall) & ~skin & near_wall) | (wall & (~skin | (spread > 0.004))))     # new walls: flat skin colour whenever their UVs span texture areas
+    good = np.where(hand & ~wall & skin & ~near_wall & (spread < 0.004))[0]
+    if not cand.any() or len(good) == 0:
+        return uv, 0
+    ci = np.where(cand)[0]
+    _, nn = cKDTree(cen[good]).query(cen[ci])
+    uv = uv.copy()
+    e = 0.0006
+    c = cuv[good[nn]]
+    uv[ci] = c[:, None, :] + np.array([[-e, -e], [e, -e], [0, e]])[None]
+    return uv, len(ci)

@@ -1,27 +1,50 @@
 """Write models/<Name>/README.md for the four delivered characters and the top-level README.md.
-python3 tools/make_readmes.py <logs_dir> <models_dir> <repo_root>
-<logs_dir> holds verify_<tag>_<fbx|glb>.log (output of verify_export.py) and build_<tag>.log (output of build_model.py)."""
+python3 tools/make_readmes.py <logs_dir> <models_dir> <repo_root> [tag ...]
+<logs_dir> holds verify_<tag>_<fbx|glb>.log (output of verify_export.py), anim_<tag>_<fbx|glb>.log (verify_anim.py), build_<tag>.log (build_model.py)
+and keyreach_<tag>.log (key_reach.py). Without tags all four model READMEs are written, otherwise only the named ones (the top-level README is always written)."""
 import sys, os, re, json
 
 logs, models, root = sys.argv[1:4]
-
-FACE_DE = {"turbo": "8.3", "cowboy": "5.3"}
-FACE_NOTE = {"turbo": "(顔のテクスチャだけ、追加依頼で参考写真に合わせて補正している。下記「顔の修正」)", "cowboy": "(顔の形状・テクスチャ・サングラスは、追加依頼で参考写真に合わせて修正している。下記「顔とサングラスの修正」)", "alone": "", "gray": ""}
+ONLY = sys.argv[4:]
+SRC_NEW = "作り直された Meshy FBX(`{f}.fbx`。https://gofile.io/d/tVUQudhH)"
 
 MODELS = {
-    "turbo": dict(name="Oliver_Turbo_A_Pose", short="Turbo", above="最大 0.11 mm", desc="ピンク×青のジャケット / 赤いサングラス / ボウルカット",
-                  hands="4本の指先が個別に検出できたため、各指の軸(断面ループ追跡)に沿って指と指の接触部をブーリアンで切り離した(指の長さの約80%まで)。",
-                  face=True),
-    "cowboy": dict(name="Oliver_Cowboy_Tears_A_Pose", short="Cowboy", extra="* **サングラス**: 作り直した丸型サングラス(マテリアル `Glasses_Frame` / `Glasses_Lens`、2583 頂点)は `Head` ボーン 100% で固定。口のシェイプキーで動く量は最大 0.15 mm(測定値)。", above="最大 1.02 mm(`jawOpen` による。顎の動きが頬横の髪の一部にわずかに伝わる。他のキーは 0.81 mm 以下)", desc="カウボーイハット / 青いフリンジジャケット / 丸サングラス / ヤギひげ",
-                   hands="元メッシュの指は4本が癒着した『ミトン状』で指先も分離していなかった。手の形状から4本の指軸を推定し、指先側から指の長さの約80%までスリットを新規に彫り込んで独立して曲がる指にした(付け根側の約20%は水かき状につながったまま)。",
-                   face=True),
+    "turbo": dict(name="Oliver_Turbo_A_Pose", short="Turbo", remade="Turbo", desc="ピンク×青のジャケット / 赤いサングラス / ボウルカット",
+                  hands="4本の指は元メッシュで互いに接していた(癒着した状態)。手の形状から4本の指軸と指先を推定し、指と指の接触部を、指先側から指の長さの約80%までブーリアンで切り離して独立して曲がる指にした(付け根側の約20%は水かき状につながったまま)。切り離しで露出した面は単色の肌色にしてある。",
+                  mouth="口の位置は顔の深度の谷(唇のしわ)を測って決めた(口角 x = -25〜+25 mm)。"),
+    "cowboy": dict(name="Oliver_Cowboy_Tears_A_Pose", short="Cowboy", remade="Cowboy", desc="カウボーイハット / 青いフリンジジャケット / 丸サングラス / ヤギひげ",
+                   hands="元メッシュ(約14万頂点)は間引かれていて粗く、指と指がほぼ接していた。手と口まわりだけを**局所的に細分化**(辺長 約5 mm → 約1.2 mm)してから、4本の指軸と指先を推定し、指と指の接触部を指先側から指の長さの約80%までブーリアンで切り離した(付け根側の約20%は水かき状につながったまま)。切り離しで露出した面は単色の肌色にしてある。",
+                   mouth="口の位置は顔の深度の谷(唇のしわ)を測って決めた(口角 x = -30〜+14 mm)。口まわりも同様に局所細分化している。"),
     "alone": dict(name="Oliver_Alone_In_A_Crowd_A_Pose", short="Alone", above="最大 0.11 mm", desc="マゼンタのロングコート / ボブヘア / サングラス / 口ひげ",
-                  hands="4本の指先が個別に検出できたため、各指の軸に沿って指と指の接触部をブーリアンで切り離した(指の長さの約80%まで)。肌が暗い色でも手の領域を拾えるよう、色相・彩度ベースの肌判定を使った。",
-                  face=False),
+                  hands="4本の指先が個別に検出できたため、各指の軸に沿って指と指の接触部をブーリアンで切り離した(指の長さの約80%まで)。肌が暗い色でも手の領域を拾えるよう、色相・彩度ベースの肌判定を使った。"),
     "gray": dict(name="Oliver_Gray_Suit_A_Pose", short="Gray", above="最大 0.11 mm", desc="グレーのスーツ / 黒いロングヘア / 口ひげ",
-                 hands="元メッシュの指は癒着していた(Cowboyと同様)。指軸を推定して指先側から約80%までスリットを新規に彫り込んだ。付け根側の約20%は水かき状につながったまま。",
-                 face=False),
+                 hands="元メッシュの指は癒着していた(Cowboyと同様)。指軸を推定して指先側から約80%までスリットを新規に彫り込んだ。付け根側の約20%は水かき状につながったまま。"),
 }
+REMADE = ("turbo", "cowboy")
+
+
+def tex_summary(v):
+    """e.g. 'base_color 4096² / normal 4096²' from the VERIFY texture lines of a re-imported file."""
+    out = []
+    for line in v.get("textures", []):
+        m = re.search(r"(BASE COLOR|NORMAL MAP|METALLIC ROUGHNESS|\S*_(base_color|normal|metallic_roughness)\S*?)\s.*?\((\d+), (\d+)\)", line)
+        if m:
+            kind = "base_color" if ("BASE" in m.group(1) or "base_color" in m.group(1)) else ("normal" if ("NORMAL" in m.group(1) or "normal" in m.group(1)) else "metallic_roughness")
+            out.append(f"{kind} {m.group(3)}²")
+    return " / ".join(dict.fromkeys(out)) or "?"
+
+
+def parse_keyreach(path):
+    d = {}
+    if os.path.exists(path):
+        for line in open(path, errors="ignore"):
+            m = re.match(r"KEYREACH max ([\d.]+) mm by (\S+)", line)
+            if m:
+                d["max"], d["by"] = float(m.group(1)), m.group(2)
+            m = re.match(r"KEYREACH Jaw-bone weight above (\d+) mm: max ([\d.]+)", line)
+            if m:
+                d["jaw_w"] = float(m.group(2))
+    return d
 
 
 def parse_verify(path):
@@ -130,6 +153,8 @@ Hips
 ```"""
 
 for tag, m in MODELS.items():
+    if ONLY and tag not in ONLY:
+        continue
     name = m["name"]
     vf = parse_verify(os.path.join(logs, f"verify_{tag}_fbx.log"))
     vg = parse_verify(os.path.join(logs, f"verify_{tag}_glb.log"))
@@ -139,43 +164,33 @@ for tag, m in MODELS.items():
     thumb = b.get("thumb", {})
     thumb_s = ", ".join(f"{s}: {thumb[s]['dist_mm']:.1f} mm" for s in ("R", "L") if s in thumb)
     keys_rows = "\n".join(f"| {k} | {vf['keys'][k][0]:,} | {vf['keys'][k][1]:.1f} mm |" for k in vf.get("keys", {}))
-    face_section = ""
-    if tag == "turbo":
-        face_section = f"""
-## 顔の修正(追加依頼: 参考写真に合わせて顔を直す)
+    remade = tag in REMADE
+    kr = parse_keyreach(os.path.join(logs, f"keyreach_{tag}.log"))
+    above = m.get("above") or f"最大 {kr.get('max', 0):.2f} mm(`{kr.get('by', '')}` による。顎ボーンのウェイトは 0)"
+    if remade:
+        intro = (f"{m['desc']}。{SRC_NEW.format(f=m['remade'])}を、元の見た目(形状・色・UV・テクスチャ)を保ったまま、指と口が動くキャラクターに加工したもの。"
+                 "元ファイルに付いていた Meshy の自動リグ(24 ボーン、指・顎なし)とそのアニメーションは使わず、下記の 53 ボーンのリグに作り直している。")
+        tex_files = "`base_color`(4096²) / `normal`(4096²)(元データに roughness / metallic のマップは無い。マテリアルは roughness 0.6 / metallic 0 の固定値)"
+        origin = f"""
+## 元データと加工の範囲(作り直し版)
 
-`reference/turbo_reference_photo.png` に合わせて**顔のテクスチャ**を補正した(髪・サングラス・服・手・リグは変更なし。顔のメッシュはランドマーク比較で写真と 1〜3 mm 以内に一致していたため形状は触っていない)。
-
-1. 参考写真(顔幅 約150px)を **GFPGAN v1.4**(顔復元 AI、ONNX・CPU 実行)で 3 倍に超解像して顔の細部(目鼻口・皮膚の質感)を復元
-2. 写真とモデル正面レンダの両方で MediaPipe 顔ランドマーク(478点)を検出し、Thin-Plate-Spline で写真をモデルの正面ビューへ歪ませて重ねる
-3. 正面ビュー上で肌の色・陰影・立体感(鼻筋、頬、唇の形と色、顎のライン)を写真のものに置き換え、色味は写真の肌に寄せる(髪・サングラス・襟の近くは補正を弱めて元のテクスチャを保持)
-4. 差分をカメラに正対し視認できるテクセルだけ 8K テクスチャに焼き込み(UV・メッシュは不変)
-
-比較(左: 参考写真をモデル正面に合わせたもの / 中: 修正前 / 右: 修正後): `face_fix/turbo_face_compare.png`。
-顔領域の平均色差(Lab ΔE。写真をモデルの顔に歪ませて重ねたものとの色の差。目の周りの帯(サングラス)は除く。値が小さいほど写真に近い): **修正前 13.9 → 修正後 {FACE_DE['turbo']}**。
-
-**限界**: 参考写真は正面1枚のため、奥行き方向(鼻の高さ、顎の彫り)は写真から復元できない。顔の凹凸はメッシュ側の形状に依存している。サングラスで隠れた目・眉は写真にも写っていないので再現していない。AI 顔復元で細部を補っているため、ホクロ・肌の細かい凹凸などは「写真に写っている実物」ではなく推定で補った質感になる。
+* 元データ: {SRC_NEW.format(f=m['remade'])}。メッシュは UV の継ぎ目で頂点が分かれていたため、同じ位置の頂点を溶接して一枚の連続した面にしてから加工した(形状は変えていない)。元の `.fbx` は変更していない。
+* **加工した場所**: 手(指の切り離し)と口まわり(唇の開口・口腔・歯・舌)だけ。顔・髪・服・サングラス・帽子の形状と色は元データのまま。
+* **サングラスの色**: 元データのテクスチャでサングラスと肌の色が混ざっている部分があるが、依頼により**修正していない(元のまま)**。
+* 顔の作り直し(参考写真に合わせた顔の補正)はこの版では行っていない。
 """
-    elif tag == "cowboy":
-        face_section = f"""
-## 顔とサングラスの修正(追加依頼: 参考写真に合わせて顔を直す / サングラスが変なので直す)
-
-`reference/cowboy_reference_photo.jpg` に合わせて**顔の形状・テクスチャ・サングラス**を修正した(髪・帽子・服・手・リグの構造は変更なし)。
-
-**顔の形状**: 写真とモデル正面レンダの顔ランドマーク差(輪郭・頬・顎。最大 約12 mm、顎は写真の方が約6 mm 低く、頬骨は約12 mm 下)を Thin-Plate-Spline でメッシュに反映して顔の頂点を動かした(唇・鼻は固定、顔の外周でフェードアウト。顔の前面だけ動かす)。
-
-**サングラス(元のモデルは壊れていた)**: 元メッシュのサングラスは立体として不完全だった(レンズの立体は片側にしか残っておらず、反対側は黒い円がテクスチャに描かれているだけ。テンプルは耳の手前で崩れ、ブリッジと鼻パッドは凸凹のかたまり)。顔の皮膚表面より手前に飛び出している頂点を検出して**元のサングラス形状をすべて撤去**し、穴を皮膚で埋めた上で、写真の位置・大きさに合わせて**新しい丸型サングラスを作り直した**(左右対称の丸レンズ2枚 + 細い金属リム + ブリッジ + 鼻パッド + 耳まで届くテンプル。フレームは金属マテリアル `Glasses_Frame`、レンズは濃い色付きガラス `Glasses_Lens`。頭ボーンに固定)。元のテクスチャに描き込まれていたサングラスの線・影は写真から塗り直した。
-
-**顔のテクスチャ**: 参考写真(顔幅 約150px)を **GFPGAN v1.4**(顔復元 AI、ONNX・CPU 実行)で超解像し、ランドマークで正面ビューに歪ませて、肌・ヤギひげの色・陰影・形・唇・鼻筋を写真のものに置き換えた(髪・帽子・襟の近くは元のテクスチャを保持)。差分は 8K テクスチャに焼き込み。
-
-比較(左: 参考写真をモデル正面に合わせたもの / 中: 修正前 / 右: 修正後): `face_fix/cowboy_face_compare.png`。
-顔領域の平均色差(Lab ΔE。写真をモデルの顔に歪ませて重ねたものとの色の差。目の周りの帯(サングラス)は除く。値が小さいほど写真に近い): **修正前 23.3 → 修正後 {FACE_DE['cowboy']}**。
-
-**限界**: 参考写真は正面1枚なので、奥行き(鼻の高さ・眉の出方)は写真から復元できず、鼻などの奥行きの形はメッシュ元のまま。顔の動かす量は写真との輪郭の差に基づく推定。AI 顔復元の細部は推定で補ったもの。レンズは写真のような「瞼の影が映り込む艶のあるガラス」ではなく単色の濃色ガラス。口の位置が約3 mm 下がったため口(唇のしわ位置)を測り直して口の構造を作り直した。
-"""
+        extra_lim = """* **元データに roughness / metallic マップが無い**ため、材質は固定値(roughness 0.6 / metallic 0)。FBX / GLB / .blend ともベースカラー+ノーマルのみ。GLB のベースカラーは JPEG(q92)に再エンコードされている。
+* **口を閉じるキー `mouthClose`**(唇を強く閉じ合わせる)では、口角に 1〜2 mm の薄い皮膚の折り返し(三角形の小さなはみ出し)が出る。通常の閉じた口は元の顔(キー 0)で、そこには出ない。
+* 指を1本だけ曲げると、癒着していた指の間の面(水かき状の部分と切り口)が引き伸ばされ、平らな肌色の「ひれ」状に見えることがある(Cowboy で目立つ)。切り口の面は単色の肌色で、元のテクスチャの質感はない。"""
+    else:
+        intro = f"{m['desc']}。Meshy 由来の静的メッシュ(単一メッシュ)を、元の見た目(形状・色・UV・テクスチャ)を保ったまま、指と口が動くキャラクターに加工したもの。"
+        tex_files = "`base_color`(8192²) / `normal`(4096²) / `roughness` / `metallic` / `metallic_roughness`(G=roughness, B=metallic のパック版)"
+        origin = ""
+        extra_lim = "* FBX はベースカラー+ノーマルのみ(roughness/metallic は `textures/` と GLB に収録)。GLB のベースカラーは JPEG。"
+    tex_row = f"| テクスチャ | {tex_summary(vf)} 読込OK(外部参照) | {tex_summary(vg)} 読込OK(埋め込み) |"
     txt = f"""# {name} — 指と口が動くリグ付きモデル
 
-{m['desc']}。Meshy 由来の静的メッシュ(単一メッシュ)を、元の見た目(形状・色・UV・テクスチャ)を保ったまま、指と口が動くキャラクターに加工したもの。{FACE_NOTE[tag]}
+{intro}
 
 ## 納品物
 
@@ -184,7 +199,7 @@ for tag, m in MODELS.items():
 | `{name}_rigged.blend` | 編集用 Blender 4.5 ファイル(リグ・ウェイト・シェイプキー・チェック用アニメ入り。テクスチャは `textures/` を相対パスで参照) |
 | `{name}.fbx` | FBX(ボーン・ウェイト・口のブレンドシェイプ・チェックアニメ。テクスチャは `textures/` を相対パスで参照、ベースカラー+ノーマル) |
 | `{name}.glb` | glTF Binary(スキン・モーフターゲット・アニメ。テクスチャ埋め込み、ベースカラーは JPEG q92 に再エンコード) |
-| `textures/` | `base_color`(8192²) / `normal`(4096²) / `roughness` / `metallic` / `metallic_roughness`(G=roughness, B=metallic のパック版) |
+| `textures/` | {tex_files} |
 | `{name}_check.mp4` | 動作確認動画(手を開く→握る→開く / 指1本ずつ / 人差し指・ピース / 口の開閉 / あいうえお / 笑顔→通常) |
 
 モデルは A ポーズ(腕・胴・脚が離れた状態)で開く。キャラクターは **-Y 方向を向き、+Z が上**(Blender 座標、1 unit = 1 m)。`Right` はキャラクターの右手(-X 側)。
@@ -213,7 +228,7 @@ for tag, m in MODELS.items():
 
 * **口の構造**: 閉じた一枚の表面だった口を、唇のしわ(幾何の谷)に沿って実際に切り開き、上唇・下唇の裏側から奥へ続く口腔(口内壁)、**上下の歯**、**舌**を追加した(黒い板や顔面の引き伸ばしではない)。口を閉じれば元の顔に戻る。
 * **Jaw ボーン**でも口を開ける(ローカル X 軸 正回転、最大 約13°)。`jawOpen` キーと同じ動きになるよう作ってあり(平均差 約0.5 mm)、**両方を同時に最大にすると二重に開く**ので、どちらか一方で使うこと。
-* 歯と舌は顎にだけ追従し、口をすぼめる音(う・お)では口腔と一緒に横幅を縮める。ひげ・口ひげはテクスチャとして皮膚の一部なので、口まわりでは皮膚と一緒に動く。**口の中心より 50 mm 以上上(鼻・サングラス・髪・帽子)の頂点の最大変位は {m['above']}**。顎の開閉は下あご〜喉の皮膚にも自然に伝わる(ボーン/キーとも)。
+* 歯と舌は顎にだけ追従し、口をすぼめる音(う・お)では口腔と一緒に横幅を縮める。ひげ・口ひげはテクスチャとして皮膚の一部なので、口まわりでは皮膚と一緒に動く。**口の中心より 50 mm 以上上(鼻・サングラス・髪・帽子)の頂点のシェイプキーによる最大変位は {above}**。顎の開閉は下あご〜喉の皮膚にも自然に伝わる(ボーン/キーとも)。
 * 音声なし。口の動きはキー値で操作する(下記チェックアニメ、またはスライダー/スクリプト)。
 
 ## チェック用アニメーション(24 fps、全 636 フレーム)
@@ -232,14 +247,14 @@ for tag, m in MODELS.items():
 ## このモデル固有の加工内容
 
 * **指**: {m['hands']}
-{m.get('extra', '')}
+{('* **口の位置**: ' + m['mouth']) if m.get('mouth') else ''}
 * **親指の握り**: 最適化で求めた握り姿勢の指先到達誤差(目標との距離) {thumb_s}。
 * **口腔のクリアランス**(口内パーツ頂点から外側の皮膚面までの最小距離。皮膚を突き抜けたら違反):
 
 | パーツ | 最小クリアランス | 違反頂点 |
 |---|---|---|
 {fmt_clear(b.get('clear', ''))}
-{face_section}
+{origin}
 ## 検証結果(書き出した FBX / GLB を**空のシーンに再読込**して計測)
 
 | 項目 | FBX | GLB |
@@ -252,7 +267,7 @@ for tag, m in MODELS.items():
 | 右手を握る: 指ウェイト>0.5 の頂点の平均移動量 | {vf.get('fist_move')} mm({vf.get('fist_n'):,} 頂点) | {vg.get('fist_move')} mm({vg.get('fist_n'):,} 頂点) |
 | 〃: 指ウェイト0なのに0.5mm以上動いた頂点 | {vf.get('fist_stray')} | {vg.get('fist_stray')} |
 | 〃: 袖・上腕(ForeArm/Arm ウェイト>0.9)の最大移動量 | {vf.get('sleeve')} mm | {vg.get('sleeve')} mm |
-| テクスチャ | ベースカラー 8192² / ノーマル 4096² 読込OK(外部参照) | ベースカラー 8192² / MR 4096² / ノーマル 4096² 読込OK(埋め込み) |
+{tex_row}
 
 再読込後の各シェイプキーの変形(FBX):
 
@@ -282,7 +297,7 @@ FBX:
 * スキニングは自動(測地距離ベース + 手指は関節チェーンから明示計算)。**服・髪・帽子・フリンジは肌と同じスキニング**で、布や髪の物理シミュレーションはない(腕を大きく動かすと服の変形は線形ブレンドスキンの限界が出る)。
 * 口腔は様式化したもの(単色の口内壁、簡易な超楕円体の歯と舌、舌ボーンなし)。母音の形は近似で、実際の発話の口形をすべて再現するものではない。
 * 指の独立した曲げは水かき状につながった部分(癒着していた手の付け根側)を引き伸ばす。ピースサインで2本が離れる量は小さい。
-* FBX はベースカラー+ノーマルのみ(roughness/metallic は `textures/` と GLB に収録)。GLB のベースカラーは JPEG。
+{extra_lim}
 * 元のメッシュは三角形のみ・単一メッシュで、頂点法線は(編集後に)自動スムースで再計算されている。
 """
     out = os.path.join(models, name, "README.md")
@@ -323,11 +338,15 @@ for tag, m in MODELS.items():
                 f"{vf.get('fist_move')} / {vg.get('fist_move')} mm | {vf.get('sleeve')} / {vg.get('sleeve')} mm | "
                 f"{vf.get('keys', {}).get('jawOpen', (0, 0))[1]:.0f} mm |")
 
+vs_all = [parse_verify(os.path.join(logs, f"verify_{t}_fbx.log")).get("verts", 0) for t in MODELS]
+vs_txt = f"{min(vs_all) / 1e4:.0f}〜{max(vs_all) / 1e4:.0f} 万頂点"
+
 top = f"""# Oliver Tree 4体 — 指と口が動くキャラクター化
 
 Meshy 由来の静的メッシュ 4 体(`Oliver_Turbo_A_Pose` / `Oliver_Cowboy_Tears_A_Pose` / `Oliver_Alone_In_A_Crowd_A_Pose` / `Oliver_Gray_Suit_A_Pose`)を、
-元の見た目(形状・色・UV・テクスチャ)を保ったまま、**指先と口まで動くキャラクター**に加工したもの。元データ(https://gofile.io/d/TiBYhFNZ)は変更せず、複製に対して作業している。
-Blender 4.5.14(ヘッドレス)+ Python のみ。API キー・有料サービスは使っていない(顔の補正にだけ MediaPipe の顔ランドマーク検出器を使用)。
+元の見た目(形状・色・UV・テクスチャ)を保ったまま、**指先と口まで動くキャラクター**に加工したもの。Alone / Gray の元データは https://gofile.io/d/TiBYhFNZ 、
+**Turbo / Cowboy は作り直された版**(https://gofile.io/d/tVUQudhH の `Turbo.fbx` / `Cowboy.fbx`)を使っている。元データは変更せず、複製に対して作業している。
+Blender 4.5.14(ヘッドレス)+ Python のみ。API キー・有料サービスは使っていない。
 
 ## 納品物
 
@@ -339,8 +358,8 @@ Blender 4.5.14(ヘッドレス)+ Python のみ。API キー・有料サービス
 
 ## やったこと
 
-1. **形状の確認・修正** — 4体とも単一の三角形メッシュ(29〜75万頂点)で、指は癒着し、口は閉じた一枚の表面だった。
-   * **指**: 手の領域を色(肌)+測地距離で切り出し、指先・指軸を推定して、**独立して曲げられるように指と指を切り離した**(ブーリアン。関節部分の頂点も確保)。Turbo / Alone は元から指先が分かれていたので接触部を切断、Cowboy / Gray は癒着した「ミトン状」だったため指軸を推定して指先側から約80%の長さまでスリットを新規に彫った。
+1. **形状の確認・修正** — 4体とも単一の三角形メッシュ({vs_txt})で、指は癒着(または互いに接した状態)し、口は閉じた一枚の表面だった。
+   * **指**: 手の領域を色(肌)+測地距離で切り出し、指先・指軸を推定して、**独立して曲げられるように指と指を切り離した**(ブーリアン。関節部分の頂点も確保)。Alone は元から指先が分かれていたので接触部を切断、Turbo / Cowboy(作り直し版)/ Gray は癒着していたため、指軸を推定して指先側から約80%の長さまでスリットを新規に彫った(Cowboy は元メッシュが粗いので手と口まわりだけを局所的に細分化してから)。
    * **口**: 唇のしわ(幾何の谷)に沿って表面を切り開き、**実際の唇の開口 + 口腔(口内壁)+ 上下の歯 + 舌**を追加した(顔の引き伸ばしや黒い板ではない)。口を閉じれば元の顔に戻る。
 2. **全身 + 手指のリグ** — Mixamo 風の命名で 53 ボーン(全身 + 左右各手 **5本の指 × 3関節** + Jaw)。ウェイトは測地距離ベースの自動スキニング + 手指は関節チェーンから明示計算(親指の対向、指を動かしても袖・胴は動かない)。A ポーズ。
 3. **口と表情** — シェイプキー `jawOpen` / `mouthClose` / `viseme_A` `viseme_I` `viseme_U` `viseme_E` `viseme_O` / `mouthSmile`(+ Jaw ボーン)。歯・舌が皮膚を突き抜けないことをクリアランスで確認。音声なし。
@@ -355,23 +374,20 @@ Blender 4.5.14(ヘッドレス)+ Python のみ。API キー・有料サービス
 
 詳細(キーごとの変位、テクスチャ、口腔クリアランス等)は各モデルの README。再生ベースの検証(再読込後にアニメを再生して 左右10本の指と顎が実際に動くか): 各モデルの README「アニメの再生検証」。
 
-## 顔の修正(追加依頼: Turbo と Cowboy を参考写真に合わせて直す / Cowboy のサングラス)
+## Turbo / Cowboy について(作り直し版)
 
-追加依頼に対し、`reference/` の参考写真(Turbo / Cowboy)に合わせて顔を修正した。詳細・前後比較画像は
-[Turbo](models/Oliver_Turbo_A_Pose/README.md#顔の修正追加依頼-参考写真に合わせて顔を直す) / [Cowboy](models/Oliver_Cowboy_Tears_A_Pose/README.md#顔とサングラスの修正追加依頼-参考写真に合わせて顔を直す--サングラスが変なので直す) の README。
-
-* **共通**: 参考写真を **GFPGAN v1.4(顔復元 AI)** で超解像 → MediaPipe 顔ランドマーク(478点)で写真をモデルの正面に歪ませて重ね、肌・唇・鼻筋・陰影・ひげを写真に置き換え、8K テクスチャに焼き込み。顔の色差(Lab ΔE、写真との差)は Turbo 13.9→8.3、Cowboy 23.3→5.3。
-* **Turbo**: 顔の輪郭はもともと写真に 1〜3 mm で一致していたため**テクスチャのみ**。
-* **Cowboy**: 顔のランドマーク差(最大約12 mm)に合わせて**顔の形状も修正**。元の**サングラスは壊れていた**(片側レンズ欠け、テンプルとブリッジが崩れた塊)ため、元の形状を撤去して**丸型サングラスを作り直した**(左右対称の丸レンズ + 細い金属リム + ブリッジ + 鼻パッド + 耳までのテンプル)。口の位置が下がったため口の構造も作り直し。
-
-**正直な限界**: 参考写真は正面1枚で、顔の奥行き(鼻の高さ・眉の出方)は写真から復元できない。GFPGAN による細部は推定で補ったもの。「写真と完全に同じ顔」にはなっておらず、**顔の見た目は大きく写真に近づいたが、完全一致ではない**。Cowboy のレンズは単色の濃色ガラス(写真の艶のあるレンズの映り込みは再現していない)。
+* ユーザーが作り直した `Turbo.fbx` / `Cowboy.fbx`(https://gofile.io/d/tVUQudhH)を使った。ファイルに付いていた Meshy の自動リグ(24 ボーン、指・顎なし)とそのアニメは使わず、メッシュだけを取り出して下記のリグを作り直した。UV の継ぎ目で分かれていた頂点は溶接して一枚の面にしている。
+* 以前の版で行っていた**顔の補正(参考写真に合わせた顔の修正・サングラスの作り直し)は、作り直し版では行っていない**(顔・髪・服・サングラス・帽子は元データのまま)。以前の版の補正画像・参考写真・補正ツールはリポジトリから削除した。
+* 元データのテクスチャには**サングラスの色と肌の色が混ざっている部分がある**。依頼により**修正していない**(元データのまま)。
+* 元データに roughness / metallic のマップは無いので、材質は roughness 0.6 / metallic 0 の固定値(ベースカラー+ノーマルのみ)。
 
 ## できていないこと・制約(正直な報告)
 
-* **Cowboy / Gray の指は付け根側 約20% が水かき状につながったまま**(元メッシュで癒着していたため、全長を切り離すと指の根元に穴が開く)。個別に曲げると付け根が引き伸ばされ、ピースサインでも2本が大きく離れない。Turbo / Alone は指が独立しており、この制約は小さい。
+* **Turbo / Cowboy / Gray の指は付け根側 約20% が水かき状につながったまま**(元メッシュで癒着していたため、全長を切り離すと指の根元に穴が開く)。個別に曲げると付け根が引き伸ばされ、ピースサインでも2本が大きく離れない。切り口の面は単色の肌色で、指を1本だけ曲げると平らな「ひれ」状に見えることがある(特に Cowboy)。Alone は指が独立しており、この制約は小さい。
 * 口腔は様式化(単色の口内壁、簡易な歯・舌、舌ボーンなし)。母音の形(あいうえお)は近似。`viseme_U`/`viseme_O` の口の幅変化に合わせて歯・舌を横に縮めているが、実際の発話の全口形を再現するものではない。Alone は唇のしわ沿いに小さな暗い点状のテクスチャ乱れが残る。Gray は口腔の下壁の頂点 3 つが外皮まで 1.06 mm(ほぼ接触)。
 * 服・髪・帽子・フリンジは肌と同じ自動スキニングで、物理シミュレーションはない。腕を大きく動かすと線形ブレンドスキンの限界(袖口のつぶれ等)が出る。
-* FBX にはベースカラー+ノーマルのみ(roughness/metallic は `textures/` と GLB に収録)。GLB のベースカラーは JPEG(q92)に再エンコードされている。
+* Turbo / Cowboy は roughness / metallic マップが無く、FBX / GLB / .blend ともベースカラー+ノーマルのみ。Alone / Gray の FBX もベースカラー+ノーマルのみ(roughness/metallic は `textures/` と GLB に収録)。GLB のベースカラーは JPEG(q92)に再エンコードされている。
+* Turbo / Cowboy: 口を強く閉じるキー `mouthClose` では口角に 1〜2 mm の薄い皮膚の折り返しが出る(キー 0 の通常の口は元の顔のまま)。
 * 動画は Blender Workbench(スタジオ照明)で 640×720 + 2K テクスチャで描画したもの(納品テクスチャは 8K のまま)。
 * 検証は Blender 4.5 での再読込のみ。Unity / Unreal / 他の DCC での読み込み・見え方は未確認。
 
@@ -391,16 +407,18 @@ sha256sum -c Oliver_Gray_Suit_A_Pose_rigged.blend.sha256
 | 段階 | スクリプト |
 |---|---|
 | 取り込み・正規化・テクスチャ取り出し | `oliver_rig/import_fbx.py`, `normalize_raw.py`, `extract_tex.py`, `prep_arrays.py`, `prep_textures.py` |
-| (Turbo / Cowboy)顔の補正 | `run_face_fix.sh`, `oliver_rig/face_restore.py`(GFPGAN), `face_render.py`, `face_landmarks.py`, `face_surgery.py`(Cowboy: 顔の形状・サングラス作り直し), `face_texture.py` |
+| (Turbo / Cowboy 作り直し版)Meshy リグ付き FBX の取り込み・溶接 | `oliver_rig/prep_rigged_fbx.py` |
+| (Cowboy)手・口まわりの局所細分化 | `oliver_rig/refine_regions.py` |
 | 1. 指の分離 | `oliver_rig/build_hands.py` (`hands_seg.py`, `hands_digits.py`, `hands_carve.py`) |
 | 口の位置の計測 | `oliver_rig/mouth_measure.py` → `configs/<tag>.json` |
+| シェイプキーの到達範囲(鼻・髪などが動かないこと) | `oliver_rig/key_reach.py` |
 | 2./3. 口・骨格・ウェイト・シェイプキー | `oliver_rig/build_model.py` (`mouth_*.py`, `skeleton.py`, `skin_weights.py`, `hand_weights.py`) |
 | アニメ・書き出し | `oliver_rig/build_anim_export.py`, `anim.py` |
 | 検証 | `oliver_rig/verify_export.py`, `verify_anim.py`, `test_poses.py`, `test_body.py`, `debug_stuck.py` |
 | 動画 | `render_videos.sh`, `oliver_rig/render_video.py`, `encode_video.sh` |
 | README 生成 | `make_readmes.py` |
 
-元データの md5: Alone `1a358a11…` / Cowboy `eaf6eba5…` / Gray `0066f040…`(FBX)、Turbo `e4260379…`(zip)。
+元データの md5: Alone `1a358a11…` / Gray `0066f040…`(FBX)、作り直し版 Turbo.fbx `7c02511b…` / Cowboy.fbx `0e3d7b1a…`。
 """
 open(os.path.join(root, "README.md"), "w").write(top)
 print("wrote", os.path.join(root, "README.md"))
