@@ -63,6 +63,19 @@ def make_flat_material(name, color, rough=0.5, spec=0.5):
     return mat
 
 
+def glasses_materials():
+    """Frame (thin gold wire) and lens (dark tinted glass) for rebuilt glasses; material slots 4 and 5."""
+    fr = make_flat_material("Glasses_Frame", (0.62, 0.45, 0.20), 0.28)
+    fr.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    ln = make_flat_material("Glasses_Lens", (0.012, 0.018, 0.04), 0.05)
+    b = ln.node_tree.nodes["Principled BSDF"]
+    b.inputs["Metallic"].default_value = 0.0
+    for k in ("Specular IOR Level", "Specular"):
+        if k in b.inputs:
+            b.inputs[k].default_value = 1.0
+    return [fr, ln]
+
+
 def mouth_materials():
     return [
         make_flat_material("Mouth_Inside", (0.30, 0.055, 0.065), 0.55),

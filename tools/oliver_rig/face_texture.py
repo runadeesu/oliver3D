@@ -127,9 +127,24 @@ def main():
     lips = np.zeros((res, res), np.uint8)
     cv2.fillPoly(lips, [np.round(M[LIPS_OUTER]).astype(np.int32)], 255)
     lips = cv2.dilate(lips, np.ones((3, 3), np.uint8), iterations=int(round(cfg.get("lip_margin_mm", 1.5) / mm_px))) > 0
+    # areas that must be repainted from the photo whatever the old texture shows (old painted-on glasses): circles (x_mm, z_mm, r_mm)
+    paint = np.zeros((res, res), bool)
+    for (px_, pz_, pr_) in cfg.get("paint_over", []):
+        gx = (px_ / 1000 - cx) / scale * res + res / 2 - 0.5
+        gz = (cz - pz_ / 1000) / scale * res + res / 2 - 0.5
+        yy, xx = np.ogrid[:res, :res]
+        paint |= (xx - gx) ** 2 + (yy - gz) ** 2 <= (pr_ / mm_px) ** 2
+    for (x0_, z0_, x1_, z1_) in cfg.get("paint_rects", []):          # rectangles (mm): x0, z0, x1, z1
+        gx0 = (x0_ / 1000 - cx) / scale * res + res / 2 - 0.5
+        gx1 = (x1_ / 1000 - cx) / scale * res + res / 2 - 0.5
+        gz0 = (cz - z1_ / 1000) / scale * res + res / 2 - 0.5
+        gz1 = (cz - z0_ / 1000) / scale * res + res / 2 - 0.5
+        paint[int(gz0):int(gz1) + 1, int(gx0):int(gx1) + 1] = True
+    old_ok_b = old_ok_b | paint
     old_ok = old_ok_b | lips
     old_ok = cv2.erode(old_ok.astype(np.uint8), np.ones((3, 3), np.uint8), iterations=int(round(cfg.get("erode_mm", 1.2) / mm_px))).astype(np.float32)
-    ph_ok = colour_class(aligned, zone, hue_max) | lips
+    hue_ph = hue_max + cfg.get("photo_hue_extra", 12.0)       # the photo's skin is more yellow than the model's; its hair is outside the face oval anyway
+    ph_ok = colour_class(aligned, zone, hue_ph) | lips
     bad = cv2.dilate((~ph_ok & (reg > 0)).astype(np.uint8), np.ones((3, 3), np.uint8), iterations=int(round(1.5 / mm_px)))
     x0, y0, x1, y1 = [int(v) for v in (poly[:, 0].min() - 20, poly[:, 1].min() - 20, poly[:, 0].max() + 20, poly[:, 1].max() + 20)]
     filled = aligned.copy()
@@ -142,7 +157,7 @@ def main():
     lam_c = cfg.get("tone_match", 0.7)
     inner = (w_region > 0.95)
     s_old = colour_class(old, None, hue_max) & inner
-    s_ph = colour_class(filled, None, hue_max) & inner
+    s_ph = colour_class(filled, None, hue_ph) & inner
     lab_p = cv2.cvtColor(filled.astype(np.float32) / 255.0, cv2.COLOR_RGB2LAB)
     gap = lab_o[s_old].mean(0) - lab_p[s_ph].mean(0)           # model skin minus photo skin
     lab_p = lab_p + lam_c * gap
@@ -154,10 +169,12 @@ def main():
     lp_old = masked_blur(lab_o, old_ok, sig)
     lp_ph = gauss(lab_p, sig)
     d = np.linalg.norm((lp_ph - lp_old) * np.array([1.0, 1.0, 1.0], np.float32), axis=2) * 2.55
-    g = np.maximum(cfg.get("hp_floor", 0.2), np.exp(-(d / cfg.get("hp_tau", 45.0)) ** 2))[..., None]
+    g = np.maximum(cfg.get("hp_floor", 0.2), np.exp(-(d / cfg.get("hp_tau", 45.0)) ** 2))
+    g = np.where(paint, 0.0, g)[..., None]
     ch = cfg.get("chroma_gain", 1.0)
     gain = np.array([1.0, ch, ch], np.float32)
-    new_lab = lp_old + gain * (lp_ph - lp_old) + g * (lab_o - lp_old)
+    php = cfg.get("photo_hp", 0.0)      # share of the photo's own fine detail (use ~1 with a sharp / restored photo)
+    new_lab = lp_old + gain * (lp_ph - lp_old) + php * (lab_p - lp_ph) + g * (lab_o - lp_old)
     new = cv2.cvtColor(new_lab, cv2.COLOR_LAB2RGB) * 255.0
     # tone-only correction (constant Lab offset towards the photo's skin) for zones where the photo's structure is not trusted
     tone_lab = lab_o - (1 - lam_c) * gap
@@ -172,7 +189,7 @@ def main():
     e0, e1 = cfg.get("edge_fade_mm", [1.0, 6.0])
     w_edge = smoothstep(e0 / mm_px, e1 / mm_px, dnon)
     w_str = w_region * gauss(old_ok, 1.5) * strength
-    w_ton = w_region_t * gauss(old_ok, 1.5) * strength
+    w_ton = w_region_t * gauss(old_ok, 1.5) * strength * smoothstep(cfg.get("tone_edge_mm", [1.5, 4.0])[0] / mm_px, cfg.get("tone_edge_mm", [1.5, 4.0])[1] / mm_px, dnon)
     delta = (w_struct * (new - oldf) * (w_str * w_edge)[..., None] + (1 - w_struct) * (tone_rgb - oldf) * w_ton[..., None])
     w = (w_struct * w_str[..., None] + (1 - w_struct) * w_ton[..., None])
     if dbg:
@@ -215,6 +232,8 @@ def main():
         t = np.stack([u[:, 0] * W, (1.0 - u[:, 1]) * H], 1)
         lo = np.floor(t.min(0)).astype(int)
         hi = np.ceil(t.max(0)).astype(int)
+        if (hi - lo).max() > 150:          # triangles spanning several uv charts (filled holes, new parts) are not baked
+            continue
         jj, ii = np.meshgrid(np.arange(lo[0], hi[0] + 1), np.arange(lo[1], hi[1] + 1))
         pc = np.stack([jj.ravel() + 0.5, ii.ravel() + 0.5], 1)
         v0, v1, v2 = t
@@ -237,7 +256,7 @@ def main():
     xy = to_px(pos)
     xi = np.clip(np.round(xy[:, 0]).astype(int), 0, res - 1)
     yi = np.clip(np.round(xy[:, 1]).astype(int), 0, res - 1)
-    vis = np.abs((-pos[:, 1]) - zbuf[yi, xi]) < 0.0035
+    vis = (np.abs((-pos[:, 1]) - zbuf[yi, xi]) < 0.0035) | paint[yi, xi]
     w_view = smoothstep(0.01, 0.12, -ny)
     n_t = len(xy)
     rows = (n_t + 1023) // 1024
@@ -277,6 +296,23 @@ def main():
     sel = mmap > 0
     sub = tex[y0t:y1t, x0t:x1t]
     sub[sel] = np.clip(sub[sel].astype(np.float32) + dmap[sel], 0, 255).astype(np.uint8)
+    # flat hole patches (removed glasses): their single texel gets the final skin colour of the surrounding front view
+    pj = f"{WORK}/{tag}_patches.json"
+    if os.path.exists(pj):
+        final = np.clip(oldf + delta, 0, 255)
+        for pi in json.load(open(pj)):
+            gx = (pi["x_mm"] / 1000 - cx) / scale * res + res / 2 - 0.5
+            gz = (cz - pi["z_mm"] / 1000) / scale * res + res / 2 - 0.5
+            yy, xx = np.ogrid[:res, :res]
+            rr2 = (xx - gx) ** 2 + (yy - gz) ** 2
+            r_in, r_out = cfg.get("patch_ring_mm", [12.0, 32.0])
+            disc = (rr2 >= (r_in / mm_px) ** 2) & (rr2 <= (r_out / mm_px) ** 2) & old_ok_b & ~paint & (w_region > 0.9)
+            if disc.sum() < 50:
+                continue
+            colr = np.median(final[disc], axis=0)
+            tc = int(pi["uv"][0] * W); tr_ = int((1 - pi["uv"][1]) * H)
+            tex[max(tr_ - 3, 0):tr_ + 4, max(tc - 3, 0):tc + 4] = np.clip(colr, 0, 255).astype(np.uint8)
+            print(tag, "patch texel", (tc, tr_), "colour", colr.round(0).tolist())
     print(tag, "texels corrected:", int(covered.sum()), "+ gutter", ring_total, "of", len(np.unique(idx)), "face texels; mean |delta| %.1f" % np.abs(corr).mean())
     Image.fromarray(tex).save(tex_out, compress_level=3)
     print(tag, "wrote", tex_out)
