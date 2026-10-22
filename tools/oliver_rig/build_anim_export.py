@@ -38,7 +38,7 @@ fbx_path = os.path.join(outdir, f"{prefix}.fbx")
 bpy.ops.export_scene.fbx(filepath=fbx_path, use_selection=True, object_types={"ARMATURE", "MESH"}, add_leaf_bones=False,
                          bake_anim=True, bake_anim_use_all_bones=True, bake_anim_use_nla_strips=False, bake_anim_use_all_actions=False,
                          bake_anim_force_startend_keying=True, bake_anim_simplify_factor=0.0, bake_anim_step=1.0,
-                         path_mode="RELATIVE", embed_textures=False, mesh_smooth_type="FACE", use_tspace=True, primary_bone_axis="Y", secondary_bone_axis="X")
+                         path_mode="RELATIVE", embed_textures=False, mesh_smooth_type="FACE", use_tspace=False, primary_bone_axis="Y", secondary_bone_axis="X")
 log("FBX", fbx_path, os.path.getsize(fbx_path) // 1000000, "MB")
 glb_path = os.path.join(outdir, f"{prefix}.glb")
 bpy.ops.export_scene.gltf(filepath=glb_path, export_format="GLB", use_selection=True, export_image_format="JPEG", export_jpeg_quality=92,

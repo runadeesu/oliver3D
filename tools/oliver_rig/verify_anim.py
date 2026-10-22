@@ -47,7 +47,7 @@ def evaluated():
 
 sc.frame_set(1)
 rest = evaluated()
-print("VANIM", os.path.basename(path), "fps", sc.render.fps, "frame range", sc.frame_start, sc.frame_end)
+print("VANIM", os.path.basename(path), "fps", sc.render.fps, "action frame range", min(int(a.frame_range[0]) for a in bpy.data.actions), max(int(a.frame_range[1]) for a in bpy.data.actions))
 for seg, a, b in SEG:
     peak = {k: 0.0 for k in groups}
     for fr in range(a, b + 1, 2):
@@ -58,6 +58,7 @@ for seg, a, b in SEG:
                 peak[k] = max(peak[k], float(d[m].mean()) * 1000)
     fing = " ".join(f"{k}={v:.0f}" for k, v in peak.items() if k != "Jaw")
     print(f"VANIM {seg:20s} frames {a}-{b}  peak mean move (mm): {fing}  Jaw={peak['Jaw']:.1f}")
-# the very last frame must be back at rest (animation ends in the neutral A-pose)
-sc.frame_set(sc.frame_end)
-print("VANIM last frame vs frame 1: max vertex difference %.2f mm" % (np.linalg.norm(evaluated() - rest, axis=1).max() * 1000))
+# the very last keyed frame must be back at rest (animation ends in the neutral A-pose)
+last = int(max(a.frame_range[1] for a in bpy.data.actions))
+sc.frame_set(last)
+print("VANIM last frame vs frame 1: max vertex difference %.2f mm (frame %d)" % (np.linalg.norm(evaluated() - rest, axis=1).max() * 1000, last))
