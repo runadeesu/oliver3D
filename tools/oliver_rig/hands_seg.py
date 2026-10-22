@@ -39,6 +39,25 @@ def close_mask(adj, m, ok, iters=3):
     return mf > 0
 
 
+def fill_enclosed(adj, m, near):
+    """Add every connected non-hand patch that lies completely inside the search sphere (nails, wrinkles, texture noise whose colour
+    is not skin-like). Patches connected to the rest of the body outside the sphere (sleeve, trousers) stay out."""
+    from scipy.sparse.csgraph import connected_components
+    rest = near & ~m
+    idx = np.where(rest)[0]
+    if len(idx) == 0:
+        return m
+    sub = adj[idx][:, idx]
+    nc, lab = connected_components(sub, directed=False)
+    outside = np.asarray(adj[:, ~near].sum(1)).ravel() > 0          # vertices that have a neighbour outside the sphere
+    touches = np.zeros(nc, bool)
+    np.logical_or.at(touches, lab, outside[idx])
+    m = m.copy()
+    add = idx[~touches[lab]]
+    m[add] = True
+    return m
+
+
 def segment_hand(co, vc, adj, side, search_center, search_radius, shoulder, **skin_kw):
     """Return boolean vertex mask of the skin-coloured hand region of one side."""
     c = np.asarray(search_center, np.float64)
@@ -52,6 +71,7 @@ def segment_hand(co, vc, adj, side, search_center, search_radius, shoulder, **sk
     m = grow_region(adj, ok, seed)
     # fill holes caused by texture noise, but never leave the search sphere
     m = close_mask(adj, m, near, iters=3)
+    m = fill_enclosed(adj, m, near)
     m = grow_region(adj, m | (near & skin & False), seed) if m[seed] else m
     return m, seed, vc[m].mean(0)
 

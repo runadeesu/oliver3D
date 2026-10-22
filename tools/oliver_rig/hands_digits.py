@@ -238,14 +238,76 @@ def complete_fingers(P, W, a, u, n, finger_tip_pts, thumb_pt, dist, n_fingers=4)
     return out, True
 
 
-def analyze_hand(co, faces, mask, adj, side, thumb_hint=None, finger_tips=None):
-    """Full digit analysis. finger_tips (optional): dict name->xyz overriding detected tips."""
+def guided_digits(P, side, guide, n_fingers=4):
+    """Hand frame and fingertips for hands whose fingers are fused / pressed together (tip detection by geodesic maxima fails).
+    guide: dict(axis=hand axis hint (wrist -> fingers), thumb_dir=lateral direction pointing to the thumb side, thumb_tip=optional point).
+    The wrist centre is the centroid of the proximal ring of the hand mask; the fingers are found from the lateral profile of the
+    distal extent: the profile run that reaches > 55 % of the longest finger (thumb excluded) is divided into four equal windows
+    (index = thumb side .. pinky) and the farthest point in each window is its tip.
+    Returns W, a, u, n, thumb_index, [4 tip points index..pinky]."""
+    a0 = np.asarray(guide["axis"], float); a0 /= np.linalg.norm(a0)
+    u0 = np.asarray(guide["thumb_dir"], float); u0 -= (u0 @ a0) * a0; u0 /= np.linalg.norm(u0)
+    s0 = P @ a0
+    ring = s0 < np.percentile(s0, 1.0) + 0.008
+    W = P[ring].mean(0)
+    s = (P - W) @ a0
+    q = (P - W) @ u0
+    # thumb tip: given, else the most lateral point on the thumb side among the farthest 60 % of the hand
+    if "thumb_tip" in guide:
+        thumb = int(np.argmin(np.linalg.norm(P - np.asarray(guide["thumb_tip"], float), axis=1)))
+    else:
+        far = s > 0.35 * s.max()
+        idx = np.where(far)[0]
+        thumb = int(idx[np.argmax(q[idx])])
+    T = P[thumb]
+    not_thumb = np.linalg.norm(P - T, axis=1) > 0.04
+    bins = np.floor(q / 0.002).astype(int)
+    prof = {}
+    for b_, ss, ok in zip(bins, s, not_thumb):
+        if ok and ss > prof.get(b_, -1e9):
+            prof[b_] = ss
+    bk = np.array(sorted(prof))
+    pv = np.array([prof[b_] for b_ in bk])
+    smax = pv.max()
+    valid = pv > 0.55 * smax
+    # largest contiguous run of valid bins (gaps of up to 2 bins allowed)
+    best, cur = (0, 0, -1), None
+    for i in range(len(bk)):
+        if valid[i]:
+            if cur is None or bk[i] - bk[cur[1]] > 3:
+                cur = [i, i]
+            else:
+                cur[1] = i
+            if cur[1] - cur[0] > best[0]:
+                best = (cur[1] - cur[0], cur[0], cur[1])
+    qlo, qhi = bk[best[1]] * 0.002, (bk[best[2]] + 1) * 0.002
+    S = (qhi - qlo) / n_fingers
+    tips = []
+    for k in range(n_fingers):
+        qc = qhi - (k + 0.5) * S
+        sel = np.where(not_thumb & (np.abs(q - qc) < 0.35 * S) & (s > 0.5 * smax))[0]
+        tips.append(P[sel[np.argmax(s[sel])]].copy())
+    fc = np.mean(tips, 0)
+    a = fc - W; a /= np.linalg.norm(a)
+    u = T - fc; u -= (u @ a) * a; u /= np.linalg.norm(u)
+    n = np.cross(a, u) if side == "L" else np.cross(u, a)
+    n /= np.linalg.norm(n)
+    return W, a, u, n, thumb, tips
+
+
+def analyze_hand(co, faces, mask, adj, side, thumb_hint=None, finger_tips=None, guide=None):
+    """Full digit analysis. finger_tips (optional): dict name->xyz overriding detected tips. guide: see guided_digits."""
     used, f, P, G, bidx, dist = geodesic_field(co, faces, mask, adj)
     f_tri = f
-    tips = find_tips(P, dist)
-    W, a, u, n, thumb, others = hand_frame_from_tips(P, bidx, tips, dist, side)
-    # sort finger tips: index (closest to thumb side) .. pinky; synthesize missing ones for fused hands
-    ft, synthesized = complete_fingers(P, W, a, u, n, [P[t] for t in others], P[thumb], dist)
+    if guide is not None:
+        W, a, u, n, thumb, ft = guided_digits(P, side, guide)
+        tips = np.array([thumb], int)
+        synthesized = False
+    else:
+        tips = find_tips(P, dist)
+        W, a, u, n, thumb, others = hand_frame_from_tips(P, bidx, tips, dist, side)
+        # sort finger tips: index (closest to thumb side) .. pinky; synthesize missing ones for fused hands
+        ft, synthesized = complete_fingers(P, W, a, u, n, [P[t] for t in others], P[thumb], dist)
     names = FINGER_NAMES[: len(ft)]
     tipmap = dict(zip(names, ft))
     if finger_tips:

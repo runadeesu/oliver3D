@@ -4,6 +4,10 @@ import hands_seg, hands_digits
 from mathutils.bvhtree import BVHTree
 
 
+SOLVER = os.environ.get("OLIVER_BOOL_SOLVER", "AUTO")   # AUTO: exact solver, fall back to the fast one when the exact result contains stray cutter faces
+HOLE_TOLERANT = True       # exact solver tolerant to self-intersecting / non-watertight hands (needed for Meshy hands with pressed fingers)
+
+
 def axis_point(dg, z, dm):
     """Point of a finger axis line at axial coordinate z (plane perpendicular to dm through the origin)."""
     lam = (z - dg["tip"] @ dm) / (dg["dir"] @ dm)
@@ -150,51 +154,83 @@ def carve_hand(co, faces, uv, mask, res, depth_frac=0.80, th_tip=0.0042, th_web=
     uvall = np.zeros((len(Fc), 3, 2), np.float32)
     uvall[:n_orig_faces] = huv
     lay.data.foreach_set("uv", uvall.ravel())
-    mod = hand.modifiers.new("bool", "BOOLEAN")
-    mod.operation = "DIFFERENCE"
-    mod.operand_type = "OBJECT"
-    mod.object = cutter
-    mod.solver = "EXACT"
-    mod.use_self = False
-    if hasattr(mod, "material_mode"):
-        mod.material_mode = "INDEX"
-    dg = bpy.context.evaluated_depsgraph_get()
-    ev = hand.evaluated_get(dg)
-    em = ev.to_mesh()
-    nv = len(em.vertices)
-    Pn = np.empty(nv * 3, np.float32); em.vertices.foreach_get("co", Pn); Pn = Pn.reshape(-1, 3)
-    em.calc_loop_triangles()
-    nf = len(em.polygons)
-    lt = np.empty(len(em.loops), np.int32); em.loops.foreach_get("vertex_index", lt)
-    ploops = np.empty(nf, np.int32); em.polygons.foreach_get("loop_total", ploops)
-    mi2 = np.empty(nf, np.int32); em.polygons.foreach_get("material_index", mi2)
-    uvn = np.empty(len(em.loops) * 2, np.float32); em.uv_layers[0].data.foreach_get("uv", uvn); uvn = uvn.reshape(-1, 2)
-    # triangulate polygons (boolean output can contain n-gons)
-    tris, tuv, tmat = [], [], []
-    ls = np.empty(nf, np.int32); em.polygons.foreach_get("loop_start", ls)
-    for p in range(nf):
-        k = ploops[p]
-        s = ls[p]
-        for i in range(1, k - 1):
-            tris.append((lt[s], lt[s + i], lt[s + i + 1]))
-            tuv.append((uvn[s], uvn[s + i], uvn[s + i + 1]))
-            tmat.append(mi2[p])
-    ev.to_mesh_clear()
-    if len(tris) == 0:
-        raise RuntimeError("boolean returned an empty mesh (cutter orientation / manifold problem)")
-    tris = np.array(tris, np.int64); tuv = np.array(tuv, np.float32); tmat = np.array(tmat, np.int32)
-    keep = tmat != 2                    # drop the temporary caps
-    # cutter-generated wall faces: face centroid lies on the cutter surface
+    hand_bvh = BVHTree.FromPolygons([tuple(map(float, v)) for v in Pc], [tuple(map(int, f)) for f in Fc], epsilon=0.0)
     cb = BVHTree.FromPolygons([tuple(map(float, v)) for v in CV], [tuple(q) for q in cutQ], epsilon=0.0)
-    cen = Pn[tris].mean(1)
-    onwall = np.zeros(len(tris), bool)
-    for i in range(len(tris)):
-        loc, nor, idx, dist = cb.find_nearest(Vector(cen[i]), 3e-5)
-        onwall[i] = idx is not None
-    wall = onwall & (tmat != 2)
+
+    def run(solver):
+        for m_ in list(hand.modifiers):
+            hand.modifiers.remove(m_)
+        mod = hand.modifiers.new("bool", "BOOLEAN")
+        mod.operation = "DIFFERENCE"
+        mod.operand_type = "OBJECT"
+        mod.object = cutter
+        mod.solver = solver
+        mod.use_self = False
+        if solver == "EXACT" and HOLE_TOLERANT and hasattr(mod, "use_hole_tolerant"):
+            mod.use_hole_tolerant = True
+        if hasattr(mod, "material_mode"):
+            mod.material_mode = "INDEX"
+        bpy.context.view_layer.update()
+        dg = bpy.context.evaluated_depsgraph_get()
+        ev = hand.evaluated_get(dg)
+        em = ev.to_mesh()
+        nv = len(em.vertices)
+        Pn = np.empty(nv * 3, np.float32); em.vertices.foreach_get("co", Pn); Pn = Pn.reshape(-1, 3)
+        em.calc_loop_triangles()
+        nf = len(em.polygons)
+        lt = np.empty(len(em.loops), np.int32); em.loops.foreach_get("vertex_index", lt)
+        ploops = np.empty(nf, np.int32); em.polygons.foreach_get("loop_total", ploops)
+        mi2 = np.empty(nf, np.int32); em.polygons.foreach_get("material_index", mi2)
+        uvn = np.empty(len(em.loops) * 2, np.float32); em.uv_layers[0].data.foreach_get("uv", uvn); uvn = uvn.reshape(-1, 2)
+        ls = np.empty(nf, np.int32); em.polygons.foreach_get("loop_start", ls)
+        tris, tuv, tmat = [], [], []
+        for p_ in range(nf):                      # triangulate polygons (boolean output can contain n-gons)
+            k = ploops[p_]
+            s_ = ls[p_]
+            for i in range(1, k - 1):
+                tris.append((lt[s_], lt[s_ + i], lt[s_ + i + 1]))
+                tuv.append((uvn[s_], uvn[s_ + i], uvn[s_ + i + 1]))
+                tmat.append(mi2[p_])
+        ev.to_mesh_clear()
+        if len(tris) == 0:
+            return None
+        tris = np.array(tris, np.int64); tuv = np.array(tuv, np.float32); tmat = np.array(tmat, np.int32)
+        # cutter-generated wall faces: face centroid lies on the cutter surface
+        cen = Pn[tris].mean(1)
+        onwall = np.zeros(len(tris), bool)
+        for i in range(len(tris)):
+            loc, nor, idx, dist = cb.find_nearest(Vector(cen[i]), 3e-5)
+            onwall[i] = idx is not None
+        wall = onwall & (tmat != 2)
+        # quality: cut walls that float in the air (far from the hand surface) mean the solver misclassified inside / outside
+        stray = 0
+        for c in cen[wall]:
+            loc, nor, idx, dist = hand_bvh.find_nearest(Vector(c))
+            if dist > 0.0015:
+                # only count faces outside the solid: inside walls are far from the surface too -> parity test along +z
+                o = Vector(c); dv = Vector((0.123, 0.071, 1.0)).normalized(); cnt = 0
+                while True:
+                    hit = hand_bvh.ray_cast(o, dv)
+                    if hit[0] is None:
+                        break
+                    cnt += 1; o = hit[0] + dv * 1e-6
+                if cnt % 2 == 0:
+                    stray += 1
+        return Pn, tris, tuv, tmat, wall, stray
+
+    first = SOLVER if SOLVER != "AUTO" else "EXACT"
+    out = run(first)
+    if out is not None and (out[5] > 0 and SOLVER == "AUTO"):
+        log(log_prefix, "exact boolean left", out[5], "cutter faces outside the hand -> trying the fast solver")
+        alt = run("FAST")
+        if alt is not None and alt[5] < out[5]:
+            out = alt
+    if out is None:
+        raise RuntimeError("boolean returned an empty mesh (cutter orientation / manifold problem)")
+    Pn, tris, tuv, tmat, wall, stray = out
     keep = tmat != 2                    # drop the temporary caps
     tmat2 = np.where(wall, 1, tmat)
-    log(log_prefix, "boolean:", len(Fc), "->", len(tris), "tris; new wall faces:", int((wall & keep).sum()), "caps dropped:", int((~keep).sum()))
+    log(log_prefix, "boolean:", len(Fc), "->", len(tris), "tris; new wall faces:", int((wall & keep).sum()), "caps dropped:", int((~keep).sum()), "stray cutter faces:", stray)
     return dict(P_old=P, F_old=F_, uv_old=huv, used=used, P_new=Pn, tris=tris[keep], tuv=tuv[keep], tmat=tmat2[keep], remap=remap)
 
 

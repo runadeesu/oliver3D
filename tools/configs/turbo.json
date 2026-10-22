@@ -1,65 +1,111 @@
 {
-  "name": "Turbo",
+  "name": "turbo",
   "tag": "turbo",
+  "source": "remade Meshy FBX with supplied 24-bone rig (rig dropped, bind-pose mesh used)",
   "hand_search": {
     "R": {
       "center": [
-        -0.47,
-        -0.05,
-        -0.06
+        -0.454,
+        -0.052,
+        0.888
       ],
       "radius": 0.17,
       "shoulder": [
-        -0.2,
-        0.0,
-        0.45
+        -0.176,
+        0.008,
+        1.36
       ]
     },
     "L": {
       "center": [
-        0.47,
-        -0.05,
-        -0.06
+        0.446,
+        -0.052,
+        0.886
       ],
       "radius": 0.17,
       "shoulder": [
-        0.2,
-        0.0,
-        0.45
+        0.18,
+        0.006,
+        1.352
       ]
     }
   },
   "mouth": {
-    "cx_mm": -5.0,
-    "xl_mm": -31,
-    "xr_mm": 22,
+    "cx_mm": -4.0,
+    "xl_mm": -30,
+    "xr_mm": 24,
     "poly4_mm": [
-      3.941730499714053e-06,
-      7.478172359088841e-05,
-      -0.005049229158486604,
-      -0.067452993734232,
-      715.5062153495498
+      0,
+      0,
+      0,
+      0,
+      1520.0
     ],
     "fit_range_mm": [
-      -45.0,
-      27.000000000000064
+      -40.0,
+      32.0
     ]
   },
-  "face": {
-    "beard": false,
-    "sigma_mm": 0.9,
-    "strength": 1.0,
-    "tone_match": 0.15,
-    "hp_tau": 1.0,
-    "hp_floor": 0.22,
-    "skin_hue_max": 38.0,
-    "photo_sharpen": 0.0,
-    "edge_fade_mm": [
-      1.0,
-      5.0
+  "hand_guide": {
+    "R": {
+      "axis": [
+        -0.396,
+        -0.214,
+        -0.893
+      ],
+      "thumb_dir": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "thumb_tip": [
+        -0.441,
+        -0.119,
+        0.895
+      ]
+    },
+    "L": {
+      "axis": [
+        0.422,
+        -0.218,
+        -0.88
+      ],
+      "thumb_dir": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "thumb_tip": [
+        0.44,
+        -0.119,
+        0.895
+      ]
+    }
+  },
+  "glasses": {
+    "axis_xy": [
+      0.0,
+      -0.01
     ],
-    "chroma_gain": 1.0,
-    "top_cut_mm": 14.0,
-    "photo_hp": 1.0
+    "z_range_mm": [
+      1530,
+      1608
+    ],
+    "strong_mm": 2.0,
+    "weak_mm": 0.6,
+    "theta_deg": 100,
+    "min_comp": 30,
+    "dilate": 1,
+    "roi_mm": 12.0,
+    "nose_exclude": {
+      "x_half_mm": 15,
+      "z_below_mm": 1556
+    }
+  },
+  "glasses_tex": {
+    "mode": "frame_and_lens",
+    "margin_px": 2,
+    "hole_red_density": 0.28,
+    "hole_sigma_px": 7.0
   }
 }

@@ -16,7 +16,7 @@ hand_vids = {}
 for side, sgn in (("R", -1), ("L", 1)):
     h = cfg["hand_search"][side]
     m, seed, col = hands_seg.segment_hand(co, vc, adj, sgn, h["center"], h["radius"], h["shoulder"])
-    res = hands_digits.analyze_hand(co, F, m, adj, side, finger_tips=cfg.get("finger_tips", {}).get(side))
+    res = hands_digits.analyze_hand(co, F, m, adj, side, finger_tips=cfg.get("finger_tips", {}).get(side), guide=cfg.get("hand_guide", {}).get(side))
     carved = hands_carve.carve_hand(co, F, uv, m, res, log_prefix=f"{tag}{side}")
     co, F, uv, mat, wtag, hvids = hands_carve.reintegrate(co, F, uv, mat, m, carved)
     hand_vids[side] = hvids
