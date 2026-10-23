@@ -25,7 +25,8 @@ for a in bpy.data.actions:
     print("ACTION", a.name, [int(x) for x in a.frame_range])
 if arm.animation_data and arm.animation_data.action is None and bpy.data.actions:
     arm.animation_data.action = [a for a in bpy.data.actions if "Rig" in a.name or a.name == "Animation"][0]
-SEG = [("Hands_OpenCloseOpen", 1, 57), ("Fingers_Individual", 58, 250), ("Point_Peace", 251, 353), ("Mouth_OpenClose", 354, 456), ("Vowels_AIUEO", 457, 579), ("Smile_Normal", 580, 636)]
+import anim
+SEG = anim.segment_table()
 groups = {}
 for S, side in (("Left", "L"), ("Right", "R")):
     for f in ("Thumb", "Index", "Middle", "Ring", "Pinky"):

@@ -57,23 +57,33 @@ def lerp_state(seg, lf):
             return out
     return ks[-1][1]
 
+def spoken_text(lf):
+    """Kana spoken so far (local frame lf of the speech segment)."""
+    import speech
+    starts, n = speech.timeline()
+    done = "".join(m[0] for m, st in zip(speech.PHRASE, starts) if st - 1 <= lf)
+    return done
+
+
 def caption(frame):
     f = frame - 1
     seg_i = max(i for i, o in enumerate(offs) if o <= f)
     seg = order[seg_i]
     lf = f - offs[seg_i]
-    st = lerp_state(seg, lf)
-    title = {"Hands_OpenCloseOpen": "Hands: open -> fist -> open", "Fingers_Individual": "Fingers: bend each finger", "Point_Peace": "Index point / Peace sign",
-             "Mouth_OpenClose": "Mouth: close -> open -> close", "Vowels_AIUEO": "Vowels: A I U E O", "Smile_Normal": "Smile -> normal"}[seg]
+    title = anim.TITLES[seg]
     sub = ""
     if seg == "Fingers_Individual":
+        st = lerp_state(seg, lf)
         act = [(s, k) for s in "RL" for k in FNAME if st[s][k] > 0.3]
         if act:
             sub = ", ".join(f"{'Right' if s=='R' else 'Left'} {FNAME[k]}" for s, k in act)
-    elif seg in ("Mouth_OpenClose", "Vowels_AIUEO", "Smile_Normal"):
-        act = [(k, v) for k, v in st["keys"].items() if v > 0.05]
+    elif seg in ("Mouth_OpenClose", "Vowels_AIUEO", "Smile_Normal", "Expressions"):
+        act = sorted(((k.name, k.value) for k in kb.key_blocks if k.name != "Basis" and k.value > 0.08), key=lambda kv: -kv[1])[:3]
         sub = ", ".join(f"{JP.get(k, k)} {v:.2f}" for k, v in act)
+    elif seg == "Speech_Gestures":
+        sub = spoken_text(lf)
     elif seg == "Point_Peace":
+        st = lerp_state(seg, lf)
         sub = "peace" if st["R"]["spread"] > 3 else ("point" if st["R"]["Middle"] > 0.5 else "")
     return seg, title, sub
 
@@ -117,9 +127,12 @@ nR = np.array(hands["R"]["n"]); nL = np.array(hands["L"]["n"])
 for fr in range(f0, f1 + 1, step):
     sc.frame_set(fr)
     seg, title, sub = caption(fr)
-    if seg not in body_cache:
-        body_cache[seg] = render(body_c, body_h * 1.24, 640, 720, az=0, el=0, name="body")
-    body = body_cache[seg]
+    if seg == "Speech_Gestures":
+        body = render(body_c, body_h * 1.24, 640, 720, az=0, el=0, name="body")        # the whole body moves in this segment
+    else:
+        if seg not in body_cache:
+            body_cache[seg] = render(body_c, body_h * 1.24, 640, 720, az=0, el=0, name="body")
+        body = body_cache[seg]
     if seg in ("Hands_OpenCloseOpen", "Fingers_Individual", "Point_Peace"):
         # film every hand from the side that faces away from the body (palm side if the palm points outwards, else the back of the hand);
         # clip anything closer than 12 cm to the camera so sleeves / hems never block the view
@@ -129,6 +142,11 @@ for fr in range(f0, f1 + 1, step):
         p2 = render(hand_center("L"), 0.34, 640, 360, direction=dL, name="p2", cut=0.12)
         lab1 = "Right hand (%s)" % ("palm side" if dR is nR else "back of hand")
         lab2 = "Left hand (%s)" % ("palm side" if dL is nL else "back of hand")
+    elif seg == "Speech_Gestures":
+        p1 = render(mouth_c + np.array([0.0, 0.0, 0.050]), 0.25, 640, 360, az=0, el=0, name="p1")
+        up_c = np.array([body_c[0], 0.0, _bb[:, 2].max() - 0.36 * body_h])
+        p2 = render(up_c, body_h * 0.74, 640, 360, az=22, el=3, name="p2")
+        lab1, lab2 = "Face (front)", "Upper body (3/4 view)"
     else:
         p1 = render(mouth_c, 0.17, 640, 360, az=0, el=0, name="p1")
         p2 = render(mouth_c, 0.17, 640, 360, az=40, el=8, name="p2")

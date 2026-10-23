@@ -99,7 +99,8 @@ for pb in arm.pose.bones:
     pb.rotation_euler = (0, 0, 0)
 bpy.context.view_layer.update()
 # mouth shape keys
-for kname in ("jawOpen", "mouthClose", "viseme_A", "viseme_I", "viseme_U", "viseme_E", "viseme_O", "mouthSmile"):
+from mouth_keys import KEY_NAMES
+for kname in KEY_NAMES:
     if kname not in sk.key_blocks:
         print("VERIFY mouth key missing:", kname); continue
     for k in sk.key_blocks: k.value = 0
@@ -107,7 +108,7 @@ for kname in ("jawOpen", "mouthClose", "viseme_A", "viseme_I", "viseme_U", "vise
     bpy.context.view_layer.update()
     ev = evaluated(mesh)
     d = np.linalg.norm(ev - rest, axis=1)
-    print("VERIFY key %-11s moves %5d verts, max %.1f mm" % (kname, (d > 1e-4).sum(), d.max() * 1000))
+    print("VERIFY key %-18s moves %5d verts, max %.1f mm" % (kname, (d > 1e-4).sum(), d.max() * 1000))
 for k in sk.key_blocks: k.value = 0
 if ref:
     r = np.load(ref)

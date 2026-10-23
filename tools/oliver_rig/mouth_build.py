@@ -299,8 +299,11 @@ def build_teeth_tongue(cut, pocket, frame):
     teeth_l = row(LOWER_W, LOWER_H, False)
     # tongue
     ytip = float(np.interp(xm, xs, ys)) + 0.0125
-    V, F = superellipsoid(0.0155, 0.026, 0.0052, 0.6, 0.55, nu=20, nv=12)
-    V = V + np.array([xm, ytip + 0.026, float(z0c(xm)) - 0.0105])
+    V, F = superellipsoid(0.0150, 0.027, 0.0060, 0.80, 0.78, nu=24, nv=14)
+    t = (V[:, 1] - V[:, 1].min()) / (V[:, 1].max() - V[:, 1].min())        # 0 at the tip (front) .. 1 at the root
+    V[:, 0] *= 0.58 + 0.42 * np.sqrt(t)                                      # rounded, narrower tip
+    V[:, 2] *= 0.75 + 0.25 * t                                                # thinner towards the tip
+    V = V + np.array([xm, ytip + 0.027, float(z0c(xm)) - 0.0105])
     tongue = (V, F)
     return teeth_u, teeth_l, tongue
 
@@ -363,10 +366,20 @@ def jaw_pivot(frame, y_center):
     return np.array([frame.cx, y_center + 0.095, frame.z0 + 0.060])
 
 
+LENS_POWER = 0.62          # opening profile along the mouth: (1 - u^2)^p  (u = -1..1 across the mouth width) -> lens shaped opening
+LIP_BAND = 0.011           # the skin below the lower rim blends from the rim weight to the full jaw weight over this height
+
+
+def lens_profile(u):
+    return np.clip(1.0 - np.clip(u, -1.0, 1.0) ** 2, 0.0, 1.0) ** LENS_POWER
+
+
 def jaw_weights(asm, mouth_cfg=None):
     """Per-vertex jaw weights for the assembled mouth mesh (skin + pocket + teeth + tongue).
     Across the lip slit the weight is binary (upper 0 / lower 1) so no triangle is sheared; it fades out sideways beyond the
-    mouth corners and downwards onto the neck."""
+    mouth corners and downwards onto the neck. The lower lip rim follows a lens profile along the mouth width (full weight in the
+    middle, small at the corners) and blends into the full jaw weight over LIP_BAND below the rim, so the opening is lens shaped
+    with soft rounded corners instead of a rectangle, and the skin between rim and chin stretches gradually."""
     co, part, fr = asm["co"].astype(np.float64), asm["part"], asm["frame"]
     n = len(co)
     w = np.zeros(n)
@@ -381,21 +394,28 @@ def jaw_weights(asm, mouth_cfg=None):
     wz = 1 - smoothstep(0.050, 0.088, fr.z0 - co[:, 2])
     wy = 1 - smoothstep(yc + 0.05, yc + 0.11, co[:, 1])
     inside_w = np.abs(dx) <= hw + 1e-6
-    # below the crease: 1 inside the mouth width; beyond the corners the crease line itself blends 0..1 over 5 mm
-    wv = np.where(inside_w, (dz < -1e-6).astype(float), smoothstep(0.001, -0.004, dz))
+    lens = lens_profile(dx / hw)
+    band = smoothstep(0.0, LIP_BAND, -dz)                # 0 at the rim .. 1 at LIP_BAND below it
+    # below the crease: lens profile at the rim blending to 1 inside the mouth width; beyond the corners the crease line itself blends 0..1 over 5 mm
+    wv_in = (dz < -1e-6) * (lens + (1.0 - lens) * band)
+    wv = np.where(inside_w, wv_in, smoothstep(0.001, -0.004, dz))
     skin = part == PART_SKIN
     ws = wv * wx * wz * wy
     w[skin] = ws[skin]
-    w[lo] = wx[lo]                  # lower rim follows the same lateral falloff as the skin below it
+    w[lo] = wx[lo] * lens[lo]       # lower rim: lens profile along the width
     w[up] = 0.0
-    w[lo[0]] = w[lo[-1]] = 0.5 * wx[lo[0]]        # shared corner vertices: half way between upper (0) and lower
+    w[lo[0]] = w[lo[-1]] = 0.0      # the shared corner vertices hold still (the corners are anchored in the cheeks)
     low = part == PART_LO_WALL
-    w[low] = wx[low]
+    pk = asm["pocket"]
+    # lower pocket wall: the rows hugging the rim follow the rim, deeper rows (floor of the cavity) follow the full jaw
+    depth = np.zeros(n)
+    for (side, i, k), vid in zip(pk["meta"], range(pk["base"], pk["base"] + len(pk["meta"]))):
+        depth[vid] = POCKET_D[min(k, len(POCKET_D) - 1)]
+    w[low] = wx[low] * (lens[low] + (1.0 - lens[low]) * smoothstep(0.0, 0.012, depth[low]))
     w[part == PART_UP_WALL] = 0.0
     w[part == PART_BACK] = 0.5 * wx[part == PART_BACK]          # throat follows half way
-    pk = asm["pocket"]
     corner_ids = np.concatenate([pk["ids_up"][0, 1:], pk["ids_up"][-1, 1:]])
-    w[corner_ids] = 0.5 * wx[corner_ids]                          # mouth-corner columns are shared by upper and lower wall
+    w[corner_ids] = 0.18 * wx[corner_ids] * smoothstep(0.0, 0.012, depth[corner_ids])        # mouth-corner columns are shared by upper and lower wall
     w[part == PART_LO_TEETH] = 1.0
     w[part == PART_TONGUE] = 1.0
     return w
