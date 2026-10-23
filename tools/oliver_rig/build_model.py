@@ -25,9 +25,13 @@ CO, FA, UV, MAT, PART = asm["co"], asm["faces"], asm["uv"], asm["mat"], asm["par
 hd = {s: dict(W=np.array(hands[s]["W"])) for s in "LR"}
 LM = sk.estimate_landmarks(CO[: asm["n_skin"]], fr, asm["y_center"], hd, cfg)
 bones = sk.build_bone_list(LM, hands)
+json.dump({b["name"]: [list(map(float, b["head"])), list(map(float, b["tail"]))] for b in bones}, open(f"{WORK}/{tag}_rig_bones.json", "w"))
 # ---- weights (skin graph only), mouth parts explicit
 nskin, nsf = asm["n_skin"], asm["n_skin_faces"]
-Wk = sw.geodesic_weights(CO[:nskin].astype(np.float64), FA[:nsf], bones)
+if os.environ.get("OLIVER_WEIGHTS", cfg.get("weights", "heat")) == "geodesic":
+    Wk = sw.geodesic_weights(CO[:nskin].astype(np.float64), FA[:nsf], bones)
+else:
+    Wk = sw.heat_weights(CO[:nskin].astype(np.float64), FA[:nsf], bones, c_heat=float(os.environ.get("OLIVER_HEAT_C", cfg.get("heat_c", 1.0))), smooth_iter=int(os.environ.get("OLIVER_HEAT_SMOOTH", cfg.get("heat_smooth", 0))))
 W = np.zeros((len(CO), len(bones)), np.float32)
 W[:nskin] = Wk
 # explicit hand weights (palm / fingers / thumb) blended in across the wrist

@@ -55,17 +55,29 @@ def estimate_landmarks(co, frame, y_center, hands, cfg):
                          knee=np.array([kx, ycore(zk) + 0.012, zk]),
                          ankle=np.array([ax, ycore(za) + 0.0, za]),
                          toe=np.array([ax, ycore(za) - 0.085, zf + 0.018]))
+    for side in ("L", "R"):
+        for k, v in sk.get("override", {}).get("legs", {}).get(side, {}).items():
+            leg[side][k] = np.array(v, float)
     LM["legs"] = leg
     # ---- arms: shoulder joint from proportion + wrist from hand analysis
     arm = {}
+    z_arm = sk.get("arm_joint_z", z0 - 0.180)           # the ball joint of the shoulder sits ~18 cm below the mouth (not at the top of the shoulder)
+    ov = sk.get("override", {})
     for side, sgn in (("L", 1), ("R", -1)):
         W = hands[side]["W"]
-        sx = sk.get("shoulder_x", 0.19) * sgn
-        sh = np.array([sx, ycore(z_sh), z_sh])
-        clav = np.array([0.05 * sgn, ycore(z_sh) + 0.01, z_sh + 0.01])
+        sx = sk.get("shoulder_x", 0.18) * sgn
+        sh = np.array([sx, ycore(z_arm), z_arm])
+        clav = np.array([0.04 * sgn, ycore(z_sh) + 0.01, z_arm + 0.055])
         wrist = np.asarray(W, float)
         v = wrist - sh
         elbow = sh + v * sk.get("elbow_frac", 0.48) + np.array([0, 0.012, 0])
+        o = ov.get("arms", {}).get(side, {})
+        if "shoulder" in o:
+            sh = np.array(o["shoulder"], float)
+            v = wrist - sh
+            elbow = sh + v * sk.get("elbow_frac", 0.48) + np.array([0, 0.012, 0])
+        if "elbow" in o:
+            elbow = np.array(o["elbow"], float)
         arm[side] = dict(clav=clav, shoulder=sh, elbow=elbow, wrist=wrist)
     LM["arms"] = arm
     LM["zf"], LM["zt"], LM["H"] = zf, zt, H
