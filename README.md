@@ -9,10 +9,10 @@ Blender 4.5.14(ヘッドレス)+ Python のみ。API キー・有料サービス
 
 | モデル | .blend | FBX | GLB | テクスチャ | 動作確認動画 |
 |---|---|---|---|---|---|
-| **Turbo** [`Oliver_Turbo_A_Pose`](models/Oliver_Turbo_A_Pose/README.md) | [blend](models/Oliver_Turbo_A_Pose/Oliver_Turbo_A_Pose_rigged.blend) (97 MB) | [fbx](models/Oliver_Turbo_A_Pose/Oliver_Turbo_A_Pose.fbx) (42 MB) | [glb](models/Oliver_Turbo_A_Pose/Oliver_Turbo_A_Pose.glb) (63 MB) | [textures](models/Oliver_Turbo_A_Pose/textures) | [mp4](models/Oliver_Turbo_A_Pose/Oliver_Turbo_A_Pose_check.mp4) |
-| **Cowboy** [`Oliver_Cowboy_Tears_A_Pose`](models/Oliver_Cowboy_Tears_A_Pose/README.md) | [blend](models/Oliver_Cowboy_Tears_A_Pose/Oliver_Cowboy_Tears_A_Pose_rigged.blend) (27 MB) | [fbx](models/Oliver_Cowboy_Tears_A_Pose/Oliver_Cowboy_Tears_A_Pose.fbx) (14 MB) | [glb](models/Oliver_Cowboy_Tears_A_Pose/Oliver_Cowboy_Tears_A_Pose.glb) (27 MB) | [textures](models/Oliver_Cowboy_Tears_A_Pose/textures) | [mp4](models/Oliver_Cowboy_Tears_A_Pose/Oliver_Cowboy_Tears_A_Pose_check.mp4) |
-| **Alone** [`Oliver_Alone_In_A_Crowd_A_Pose`](models/Oliver_Alone_In_A_Crowd_A_Pose/README.md) | [blend](models/Oliver_Alone_In_A_Crowd_A_Pose/Oliver_Alone_In_A_Crowd_A_Pose_rigged.blend) (52 MB) | [fbx](models/Oliver_Alone_In_A_Crowd_A_Pose/Oliver_Alone_In_A_Crowd_A_Pose.fbx) (24 MB) | [glb](models/Oliver_Alone_In_A_Crowd_A_Pose/Oliver_Alone_In_A_Crowd_A_Pose.glb) (42 MB) | [textures](models/Oliver_Alone_In_A_Crowd_A_Pose/textures) | [mp4](models/Oliver_Alone_In_A_Crowd_A_Pose/Oliver_Alone_In_A_Crowd_A_Pose_check.mp4) |
-| **Gray** [`Oliver_Gray_Suit_A_Pose`](models/Oliver_Gray_Suit_A_Pose/README.md) | blend (分割 2 個, 計 135 MB — 下記「大きなファイル」参照) | [fbx](models/Oliver_Gray_Suit_A_Pose/Oliver_Gray_Suit_A_Pose.fbx) (59 MB) | [glb](models/Oliver_Gray_Suit_A_Pose/Oliver_Gray_Suit_A_Pose.glb) (94 MB) | [textures](models/Oliver_Gray_Suit_A_Pose/textures) | [mp4](models/Oliver_Gray_Suit_A_Pose/Oliver_Gray_Suit_A_Pose_check.mp4) |
+| **Turbo** [`Oliver_Turbo_A_Pose`](models/Oliver_Turbo_A_Pose/README.md) | blend (分割 3 個, 計 213 MB — 下記「大きなファイル」参照) | [fbx](models/Oliver_Turbo_A_Pose/Oliver_Turbo_A_Pose.fbx) (44 MB) | glb (分割 2 個, 計 103 MB — 下記「大きなファイル」参照) | [textures](models/Oliver_Turbo_A_Pose/textures) | [mp4](models/Oliver_Turbo_A_Pose/Oliver_Turbo_A_Pose_check.mp4) |
+| **Cowboy** [`Oliver_Cowboy_Tears_A_Pose`](models/Oliver_Cowboy_Tears_A_Pose/README.md) | [blend](models/Oliver_Cowboy_Tears_A_Pose/Oliver_Cowboy_Tears_A_Pose_rigged.blend) (59 MB) | [fbx](models/Oliver_Cowboy_Tears_A_Pose/Oliver_Cowboy_Tears_A_Pose.fbx) (17 MB) | [glb](models/Oliver_Cowboy_Tears_A_Pose/Oliver_Cowboy_Tears_A_Pose.glb) (43 MB) | [textures](models/Oliver_Cowboy_Tears_A_Pose/textures) | [mp4](models/Oliver_Cowboy_Tears_A_Pose/Oliver_Cowboy_Tears_A_Pose_check.mp4) |
+| **Alone** [`Oliver_Alone_In_A_Crowd_A_Pose`](models/Oliver_Alone_In_A_Crowd_A_Pose/README.md) | blend (分割 2 個, 計 116 MB — 下記「大きなファイル」参照) | [fbx](models/Oliver_Alone_In_A_Crowd_A_Pose/Oliver_Alone_In_A_Crowd_A_Pose.fbx) (26 MB) | [glb](models/Oliver_Alone_In_A_Crowd_A_Pose/Oliver_Alone_In_A_Crowd_A_Pose.glb) (65 MB) | [textures](models/Oliver_Alone_In_A_Crowd_A_Pose/textures) | [mp4](models/Oliver_Alone_In_A_Crowd_A_Pose/Oliver_Alone_In_A_Crowd_A_Pose_check.mp4) |
+| **Gray** [`Oliver_Gray_Suit_A_Pose`](models/Oliver_Gray_Suit_A_Pose/README.md) | blend (分割 4 個, 計 293 MB — 下記「大きなファイル」参照) | [fbx](models/Oliver_Gray_Suit_A_Pose/Oliver_Gray_Suit_A_Pose.fbx) (62 MB) | glb (分割 2 個, 計 153 MB — 下記「大きなファイル」参照) | [textures](models/Oliver_Gray_Suit_A_Pose/textures) | [mp4](models/Oliver_Gray_Suit_A_Pose/Oliver_Gray_Suit_A_Pose_check.mp4) |
 
 各モデルのフォルダに `README.md`(ボーン名・表情名・操作方法・検証値・制約)がある。モデルはどれも A ポーズで開く。
 
@@ -22,18 +22,18 @@ Blender 4.5.14(ヘッドレス)+ Python のみ。API キー・有料サービス
    * **指**: 手の領域を色(肌)+測地距離で切り出し、指先・指軸を推定して、**独立して曲げられるように指と指を切り離した**(ブーリアン。関節部分の頂点も確保)。Alone は元から指先が分かれていたので接触部を切断、Turbo / Cowboy(作り直し版)/ Gray は癒着していたため、指軸を推定して指先側から約80%の長さまでスリットを新規に彫った(Cowboy は元メッシュが粗いので手と口まわりだけを局所的に細分化してから)。
    * **口**: 唇のしわ(幾何の谷)に沿って表面を切り開き、**実際の唇の開口 + 口腔(口内壁)+ 上下の歯 + 舌**を追加した(顔の引き伸ばしや黒い板ではない)。口を閉じれば元の顔に戻る。
 2. **全身 + 手指のリグ** — Mixamo 風の命名で 53 ボーン(全身 + 左右各手 **5本の指 × 3関節** + Jaw)。ウェイトは測地距離ベースの自動スキニング + 手指は関節チェーンから明示計算(親指の対向、指を動かしても袖・胴は動かない)。A ポーズ。
-3. **口と表情** — シェイプキー `jawOpen` / `mouthClose` / `viseme_A` `viseme_I` `viseme_U` `viseme_E` `viseme_O` / `mouthSmile`(+ Jaw ボーン)。歯・舌が皮膚を突き抜けないことをクリアランスで確認。音声なし。
-4. **動作確認** — 手を開く→握る→開く / 指を1本ずつ(左右)/ 人差し指・ピース / 口の 閉→開→閉 / あ→い→う→え→お / 笑顔→通常 を 24 fps・636 フレームのアニメにし、実際に再生・レンダリングして MP4 にした。
+3. **口と表情** — 基本のシェイプキー `jawOpen` / `mouthClose` / `viseme_A` `viseme_I` `viseme_U` `viseme_E` `viseme_O` / `mouthSmile`(+ Jaw ボーン)に加えて、片側の笑顔・への字・口角を引く・すぼめ・口の横ずらし・唇の片側・顎の前後左右・頬のふくらみ・舌の 20 個の細かいキー(合計 28 個)。**開口は長方形でなく楕円形**で、口を開くと上唇もわずかに上がる。歯・舌が皮膚を突き抜けないことをクリアランスで確認。
+4. **動作確認** — 手を開く→握る→開く / 指を1本ずつ(左右)/ 人差し指・ピース / 口の 閉→開→閉 / あ→い→う→え→お / 笑顔→通常 を 24 fps・1,074 フレームのアニメにし、さらに**細かい表情の確認区間**と、**日本語の発話(こんにちは、オリバーです。よろしくね。)+呼吸・体重移動・うなずき・お辞儀・手のジェスチャーの区間**を付けた。指は人差し指から小指へ、付け根から指先へ時間差で曲がり、補間は Bezier で加速・減速する。実際に再生・レンダリングして MP4 にした。
 5. **書き出しと再読込検証** — .blend / FBX / GLB を書き出し、FBX と GLB は**空のシーンに再読込して**ボーン・ウェイト・シェイプキー・テクスチャ・アニメが残っていること、指・口が実際にメッシュを変形させることを数値で確認した。
 
 ## 検証サマリ(書き出した FBX / GLB を空シーンに再読込して計測)
 
 | モデル | ボーン数 | 指の頂点グループ | ウェイト付き頂点 | 右手を握った時の指頂点の平均移動量 (FBX / GLB) | 同・袖/上腕の最大移動量 (FBX / GLB) | `jawOpen` 最大変位 |
 |---|---|---|---|---|---|---|
-| Turbo | 53 | 30 | 532,209/532,209 | 55.3 / 57.1 mm | 0.0 / 0.0 mm | 33 mm |
-| Cowboy | 53 | 30 | 144,182/144,182 | 53.3 / 53.6 mm | 0.0 / 0.0 mm | 35 mm |
-| Alone | 53 | 30 | 288,967/288,967 | 59.9 / 58.1 mm | 0.0 / 0.0 mm | 32 mm |
-| Gray | 53 | 30 | 754,483/754,483 | 54.7 / 54.3 mm | 0.0 / 0.0 mm | 30 mm |
+| Turbo | 53 | 30 | 532,309/532,309 | 55.3 / 57.1 mm | 0.0 / 0.0 mm | 33 mm |
+| Cowboy | 53 | 30 | 144,282/144,282 | 53.3 / 53.6 mm | 0.0 / 0.0 mm | 35 mm |
+| Alone | 53 | 30 | 289,067/289,067 | 59.9 / 58.1 mm | 0.0 / 0.0 mm | 32 mm |
+| Gray | 53 | 30 | 754,583/754,583 | 54.7 / 54.3 mm | 0.0 / 0.0 mm | 30 mm |
 
 詳細(キーごとの変位、テクスチャ、口腔クリアランス等)は各モデルの README。再生ベースの検証(再読込後にアニメを再生して 左右10本の指と顎が実際に動くか): 各モデルの README「アニメの再生検証」。
 
@@ -50,18 +50,28 @@ Blender 4.5.14(ヘッドレス)+ Python のみ。API キー・有料サービス
 * 口腔は様式化(単色の口内壁、簡易な歯・舌、舌ボーンなし)。母音の形(あいうえお)は近似。`viseme_U`/`viseme_O` の口の幅変化に合わせて歯・舌を横に縮めているが、実際の発話の全口形を再現するものではない。Alone は唇のしわ沿いに小さな暗い点状のテクスチャ乱れが残る。Gray は口腔の下壁の頂点 3 つが外皮まで 1.06 mm(ほぼ接触)。
 * 服・髪・帽子・フリンジは肌と同じ自動スキニングで、物理シミュレーションはない。腕を大きく動かすと線形ブレンドスキンの限界(袖口のつぶれ等)が出る。
 * Turbo / Cowboy は roughness / metallic マップが無く、FBX / GLB / .blend ともベースカラー+ノーマルのみ。Alone / Gray の FBX もベースカラー+ノーマルのみ(roughness/metallic は `textures/` と GLB に収録)。GLB のベースカラーは JPEG(q92)に再エンコードされている。
-* Turbo / Cowboy: 口を強く閉じるキー `mouthClose` では口角に 1〜2 mm の薄い皮膚の折り返しが出る(キー 0 の通常の口は元の顔のまま)。
+* 口を強く閉じるキー `mouthClose` では、唇の合わせ目にごく小さな(1 mm 以下の)ギザつきが出ることがある(キー 0 の通常の口は元の顔のまま)。
+* 追加の細かい表情キー(20 個)は単純な変位場で作った近似で、複数を同時に最大にすると唇や歯が重なることがある。発話デモは音声のない見本(音節表から口形を作成)で、人の実際の動きの細かさ(まばたき・目の動き等)は再現していない。
+* シェイプキーが 28 個(全頂点分)あるため、.blend / GLB のファイルサイズは大きい(Turbo の .blend 約 213 MB、Gray の .blend 約 293 MB)。
 * 動画は Blender Workbench(スタジオ照明)で、2048² に縮小したテクスチャを使って 1280×720 で描画したもの(納品テクスチャは元の解像度のまま)。
 * 検証は Blender 4.5 での再読込のみ。Unity / Unreal / 他の DCC での読み込み・見え方は未確認。
 
 ## 大きなファイル
 
-GitHub の 1 ファイル 100 MB 制限のため、超えるファイルは 90 MiB ごとに分割してある(`*.part-aa`, `*.part-ab`, …)。結合:
+GitHub の 1 ファイル 100 MB 制限のため、超えるファイルは 90 MiB ごとに分割してある(`*.part-00`, `*.part-01`, …)。結合と検証(各モデルのフォルダで):
 
 ```bash
-cat Oliver_Gray_Suit_A_Pose_rigged.blend.part-* > Oliver_Gray_Suit_A_Pose_rigged.blend
-sha256sum -c Oliver_Gray_Suit_A_Pose_rigged.blend.sha256
+cat <ファイル名>.part-* > <ファイル名>
+sha256sum -c <ファイル名>.sha256
 ```
+
+分割してあるファイル:
+
+* `models/Oliver_Turbo_A_Pose/Oliver_Turbo_A_Pose.glb`(2 分割)
+* `models/Oliver_Turbo_A_Pose/Oliver_Turbo_A_Pose_rigged.blend`(3 分割)
+* `models/Oliver_Alone_In_A_Crowd_A_Pose/Oliver_Alone_In_A_Crowd_A_Pose_rigged.blend`(2 分割)
+* `models/Oliver_Gray_Suit_A_Pose/Oliver_Gray_Suit_A_Pose.glb`(2 分割)
+* `models/Oliver_Gray_Suit_A_Pose/Oliver_Gray_Suit_A_Pose_rigged.blend`(4 分割)
 
 ## 作り方(再現)
 

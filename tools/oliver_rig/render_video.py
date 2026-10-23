@@ -105,6 +105,8 @@ body_c = (_bb.min(0) + _bb.max(0)) / 2          # the models stand with their fe
 body_h = _bb[:, 2].max() - _bb[:, 2].min()
 jaw_c = np.array((arm.matrix_world @ arm.pose.bones["Jaw"].head).to_tuple())
 mouth_c = np.array([jaw_c[0], -0.11, jaw_c[2] - 0.06])
+_hb = arm.pose.bones["Head"]
+mouth_in_head = (arm.matrix_world @ _hb.bone.matrix_local).inverted() @ Vector(mouth_c.tolist())      # mouth centre in the Head bone's rest frame
 def render(cen, scale, w, h, direction=None, az=0, el=0, name="p", cut=None):
     sc.render.resolution_x, sc.render.resolution_y = w, h
     if direction is not None:
@@ -143,7 +145,10 @@ for fr in range(f0, f1 + 1, step):
         lab1 = "Right hand (%s)" % ("palm side" if dR is nR else "back of hand")
         lab2 = "Left hand (%s)" % ("palm side" if dL is nL else "back of hand")
     elif seg == "Speech_Gestures":
-        p1 = render(mouth_c + np.array([0.0, 0.0, 0.050]), 0.25, 640, 360, az=0, el=0, name="p1")
+        # the face camera follows the mouth: the rest-pose mouth centre is carried along with the Head bone (the head nods and bows)
+        hb = arm.pose.bones["Head"]
+        mouth_now = np.array(((arm.matrix_world @ hb.matrix) @ mouth_in_head).to_tuple())
+        p1 = render(mouth_now + np.array([0.0, 0.0, 0.040]), 0.25, 640, 360, az=0, el=0, name="p1")
         up_c = np.array([body_c[0], 0.0, _bb[:, 2].max() - 0.36 * body_h])
         p2 = render(up_c, body_h * 0.74, 640, 360, az=22, el=3, name="p2")
         lab1, lab2 = "Face (front)", "Upper body (3/4 view)"
