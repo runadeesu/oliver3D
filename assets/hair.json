@@ -1,0 +1,28 @@
+{
+ "strands": 18000,
+ "K": 10,
+ "guides": 1100,
+ "totalStrands": 45000,
+ "bytes": {
+  "points": 2880000,
+  "gids": 108000,
+  "gw": 72000,
+  "guide": 26400
+ },
+ "radius": 4e-05,
+ "head": "CC_Base_Head",
+ "dyn": {
+  "frequency": 2.6,
+  "damping": 0.8,
+  "gravity": 0.8,
+  "inertia": 1.0,
+  "freeLength": 0.04,
+  "scalp": 0.05,
+  "maxTip": 0.012,
+  "maxScalp": 0.0025,
+  "airThreshold": 2.5,
+  "airDrag": 0.7,
+  "flutter": 0.6,
+  "flutterSpeed": 8.0
+ }
+}

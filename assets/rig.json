@@ -1,0 +1,4391 @@
+{
+ "props": {
+  "auto_twist": {
+   "default": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "手首・腕・太もものねじれ自動分散"
+  },
+  "ik_arm_L": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "左腕 IK（1）/ FK（0）"
+  },
+  "ik_leg_L": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "左脚 IK（1）/ FK（0）"
+  },
+  "hand_L_fist": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "グー（全部の指）"
+  },
+  "hand_L_thumb": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "親指"
+  },
+  "hand_L_index": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "人差し指"
+  },
+  "hand_L_middle": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "中指"
+  },
+  "hand_L_ring": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "薬指"
+  },
+  "hand_L_pinky": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "小指"
+  },
+  "hand_L_spread": {
+   "default": 0.0,
+   "min": -1.0,
+   "max": 1.0,
+   "label": "指を広げる"
+  },
+  "ik_arm_R": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "右腕 IK（1）/ FK（0）"
+  },
+  "ik_leg_R": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "右脚 IK（1）/ FK（0）"
+  },
+  "hand_R_fist": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "グー（全部の指）"
+  },
+  "hand_R_thumb": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "親指"
+  },
+  "hand_R_index": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "人差し指"
+  },
+  "hand_R_middle": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "中指"
+  },
+  "hand_R_ring": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "薬指"
+  },
+  "hand_R_pinky": {
+   "default": 0.0,
+   "min": -0.3,
+   "max": 1.0,
+   "label": "小指"
+  },
+  "hand_R_spread": {
+   "default": 0.0,
+   "min": -1.0,
+   "max": 1.0,
+   "label": "指を広げる"
+  },
+  "ex_smile": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "笑顔"
+  },
+  "ex_laugh": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "大笑い"
+  },
+  "ex_angry": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "怒り"
+  },
+  "ex_sad": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "悲しみ"
+  },
+  "ex_surprise": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "驚き"
+  },
+  "ex_disgust": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "嫌悪（うえっ）"
+  },
+  "ex_fear": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "怖がる"
+  },
+  "ex_smirk": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "ニヤリ（片側）"
+  },
+  "ex_pout": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口をとがらせる"
+  },
+  "ex_puff": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "ほっぺを膨らませる"
+  },
+  "ex_wink_L": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "ウインク（左目）"
+  },
+  "ex_wink_R": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "ウインク（右目）"
+  },
+  "ex_tongue": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "舌を出す"
+  },
+  "fc_blink": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "まばたき（両目）"
+  },
+  "fc_blink_L": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "まばたき（左）"
+  },
+  "fc_blink_R": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "まばたき（右）"
+  },
+  "fc_eye_wide": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "目を見開く"
+  },
+  "fc_eye_squint": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "目を細める"
+  },
+  "fc_brow_up_L": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "眉を上げる（左）"
+  },
+  "fc_brow_up_R": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "眉を上げる（右）"
+  },
+  "fc_brow_down_L": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "眉を下げる（左）"
+  },
+  "fc_brow_down_R": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "眉を下げる（右）"
+  },
+  "fc_brow_in": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "眉を寄せる"
+  },
+  "fc_brow_worry": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "困り眉"
+  },
+  "fc_smile_L": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口角を上げる（左）"
+  },
+  "fc_smile_R": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口角を上げる（右）"
+  },
+  "fc_frown_L": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口角を下げる（左）"
+  },
+  "fc_frown_R": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口角を下げる（右）"
+  },
+  "fc_mouth_wide": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口を横に引く"
+  },
+  "fc_pucker": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "唇をすぼめる"
+  },
+  "fc_funnel": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "唇を突き出す"
+  },
+  "fc_press": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "唇を結ぶ"
+  },
+  "fc_upper_lip_up": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "上唇を上げる"
+  },
+  "fc_lower_lip_down": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "下唇を下げる"
+  },
+  "fc_mouth_left": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口を左へ"
+  },
+  "fc_mouth_right": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口を右へ"
+  },
+  "fc_cheek_puff": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "頬を膨らませる"
+  },
+  "fc_cheek_suck": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "頬をすぼめる"
+  },
+  "fc_cheek_raise": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "頬を上げる"
+  },
+  "fc_sneer": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "鼻にしわ"
+  },
+  "ls_a": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "あ"
+  },
+  "ls_i": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "い"
+  },
+  "ls_u": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "う"
+  },
+  "ls_e": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "え"
+  },
+  "ls_o": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "お"
+  },
+  "ls_m": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "ん・ま・ば・ぱ（唇を閉じる）"
+  },
+  "ls_f": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "ふ・F・V（下唇を噛む）"
+  },
+  "ls_s": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "さ・し・ち（歯を合わせる）"
+  },
+  "jaw_open": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "口を開ける（あご）"
+  },
+  "jaw_lr": {
+   "default": 0.0,
+   "min": -1.0,
+   "max": 1.0,
+   "label": "あごを左右に（-1右〜+1左）"
+  },
+  "jaw_fwd": {
+   "default": 0.0,
+   "min": -0.5,
+   "max": 1.0,
+   "label": "あごを前に出す"
+  },
+  "eye_pupil": {
+   "default": 0.0,
+   "min": -1.0,
+   "max": 1.0,
+   "label": "瞳孔（-1縮む〜+1開く）"
+  },
+  "eyelid_follow": {
+   "default": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "視線にまぶたを追従"
+  },
+  "neck_correctives": {
+   "default": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "首の補正（頭を回したときの首の形）"
+  },
+  "sunglasses": {
+   "default": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "サングラス（1=かける / 0=外す）"
+  },
+  "en_PP": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "PP：p・b・m（唇を閉じる）"
+  },
+  "en_FF": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "FF：f・v（下唇に前歯）"
+  },
+  "en_TH": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "TH：th（舌を歯の間に）"
+  },
+  "en_DD": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "DD：t・d（舌先を上の歯ぐきに）"
+  },
+  "en_kk": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "kk：k・g・ng"
+  },
+  "en_CH": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "CH：ch・sh・j"
+  },
+  "en_SS": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "SS：s・z"
+  },
+  "en_nn": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "nn：n・l（舌先を上に）"
+  },
+  "en_RR": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "RR：r・er"
+  },
+  "en_aa": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "aa：father の a（大きく開く）"
+  },
+  "en_E": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "E：bed・say の e"
+  },
+  "en_I": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "I：see・it の i"
+  },
+  "en_O": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "O：go・thought の o"
+  },
+  "en_U": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "U：you・w の u（すぼめる）"
+  },
+  "physics": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "物理（髪・服）1=計算 / 0=オフ"
+  },
+  "hand_L_relax": {
+   "default": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "力を抜く（自然な手）"
+  },
+  "hand_R_relax": {
+   "default": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "力を抜く（自然な手）"
+  },
+  "sunglasses_low": {
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "サングラスを鼻にずらす（上目づかい）"
+  },
+  "turbo_jacket": {
+   "default": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "ジャケット（オン＝Oliver Tree／オフ＝mont-bell）"
+  },
+  "shoulder_relax": {
+   "default": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "label": "ジャケットの肩を自然に（腕を下ろしたとき）"
+  }
+ },
+ "sections": [
+  [
+   "表情プリセット",
+   [
+    "ex_smile",
+    "ex_laugh",
+    "ex_angry",
+    "ex_sad",
+    "ex_surprise",
+    "ex_disgust",
+    "ex_fear",
+    "ex_smirk",
+    "ex_pout",
+    "ex_puff",
+    "ex_wink_L",
+    "ex_wink_R",
+    "ex_tongue"
+   ]
+  ],
+  [
+   "リップシンク（日本語 あいうえお）",
+   [
+    "ls_a",
+    "ls_i",
+    "ls_u",
+    "ls_e",
+    "ls_o",
+    "ls_m",
+    "ls_f",
+    "ls_s"
+   ]
+  ],
+  [
+   "リップシンク（英語）",
+   [
+    "en_PP",
+    "en_FF",
+    "en_TH",
+    "en_DD",
+    "en_kk",
+    "en_CH",
+    "en_SS",
+    "en_nn",
+    "en_RR",
+    "en_aa",
+    "en_E",
+    "en_I",
+    "en_O",
+    "en_U"
+   ]
+  ],
+  [
+   "あご・口",
+   [
+    "jaw_open",
+    "jaw_lr",
+    "jaw_fwd",
+    "fc_smile_L",
+    "fc_smile_R",
+    "fc_frown_L",
+    "fc_frown_R",
+    "fc_mouth_wide",
+    "fc_pucker",
+    "fc_funnel",
+    "fc_press",
+    "fc_upper_lip_up",
+    "fc_lower_lip_down",
+    "fc_mouth_left",
+    "fc_mouth_right"
+   ]
+  ],
+  [
+   "目・眉",
+   [
+    "fc_blink",
+    "fc_blink_L",
+    "fc_blink_R",
+    "fc_eye_wide",
+    "fc_eye_squint",
+    "eye_pupil",
+    "fc_brow_up_L",
+    "fc_brow_up_R",
+    "fc_brow_down_L",
+    "fc_brow_down_R",
+    "fc_brow_in",
+    "fc_brow_worry"
+   ]
+  ],
+  [
+   "頬・鼻",
+   [
+    "fc_cheek_puff",
+    "fc_cheek_suck",
+    "fc_cheek_raise",
+    "fc_sneer"
+   ]
+  ],
+  [
+   "左手の指",
+   [
+    "hand_L_relax",
+    "hand_L_fist",
+    "hand_L_thumb",
+    "hand_L_index",
+    "hand_L_middle",
+    "hand_L_ring",
+    "hand_L_pinky",
+    "hand_L_spread"
+   ]
+  ],
+  [
+   "右手の指",
+   [
+    "hand_R_relax",
+    "hand_R_fist",
+    "hand_R_thumb",
+    "hand_R_index",
+    "hand_R_middle",
+    "hand_R_ring",
+    "hand_R_pinky",
+    "hand_R_spread"
+   ]
+  ],
+  [
+   "IK / FK・その他",
+   [
+    "physics",
+    "ik_arm_L",
+    "ik_arm_R",
+    "ik_leg_L",
+    "ik_leg_R",
+    "auto_twist",
+    "eyelid_follow",
+    "neck_correctives",
+    "sunglasses",
+    "sunglasses_low",
+    "turbo_jacket",
+    "shoulder_relax"
+   ]
+  ]
+ ],
+ "shapeDrivers": [
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "eye_pupil",
+     1.0
+    ]
+   ],
+   "objects": [
+    "CC_Base_Eye"
+   ],
+   "key": "Eye_Pupil_Dilate"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "eye_pupil",
+     -1.0
+    ]
+   ],
+   "objects": [
+    "CC_Base_Eye"
+   ],
+   "key": "Eye_Pupil_Contract"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.85
+    ],
+    [
+     "ex_laugh",
+     1.0
+    ],
+    [
+     "ex_wink_L",
+     0.25
+    ],
+    [
+     "fc_smile_L",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Smile_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.85
+    ],
+    [
+     "ex_laugh",
+     1.0
+    ],
+    [
+     "ex_wink_R",
+     0.25
+    ],
+    [
+     "fc_smile_R",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Smile_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.55
+    ],
+    [
+     "ex_laugh",
+     0.9
+    ],
+    [
+     "ex_disgust",
+     0.2
+    ],
+    [
+     "ex_smirk",
+     0.3
+    ],
+    [
+     "ex_wink_L",
+     0.45
+    ],
+    [
+     "fc_cheek_raise",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Cheek_Raise_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.55
+    ],
+    [
+     "ex_laugh",
+     0.9
+    ],
+    [
+     "ex_disgust",
+     0.2
+    ],
+    [
+     "ex_wink_R",
+     0.45
+    ],
+    [
+     "fc_cheek_raise",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Cheek_Raise_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.3
+    ],
+    [
+     "ex_laugh",
+     0.7
+    ],
+    [
+     "ex_angry",
+     0.35
+    ],
+    [
+     "ex_disgust",
+     0.45
+    ],
+    [
+     "ex_smirk",
+     0.25
+    ],
+    [
+     "fc_eye_squint",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_Squint_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.3
+    ],
+    [
+     "ex_laugh",
+     0.7
+    ],
+    [
+     "ex_angry",
+     0.35
+    ],
+    [
+     "ex_disgust",
+     0.45
+    ],
+    [
+     "fc_eye_squint",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_Squint_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.15
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Dimple_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.15
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Dimple_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.1
+    ],
+    [
+     "ex_laugh",
+     0.35
+    ],
+    [
+     "ex_disgust",
+     0.4
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Nose_Crease_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smile",
+     0.1
+    ],
+    [
+     "ex_laugh",
+     0.35
+    ],
+    [
+     "ex_disgust",
+     0.4
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Nose_Crease_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_laugh",
+     0.1
+    ],
+    [
+     "ex_fear",
+     0.65
+    ],
+    [
+     "fc_mouth_wide",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Stretch_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_laugh",
+     0.1
+    ],
+    [
+     "ex_fear",
+     0.65
+    ],
+    [
+     "fc_mouth_wide",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Stretch_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_laugh",
+     0.15
+    ],
+    [
+     "ex_sad",
+     0.9
+    ],
+    [
+     "ex_surprise",
+     0.9
+    ],
+    [
+     "ex_fear",
+     1.0
+    ],
+    [
+     "fc_brow_up_L",
+     0.7
+    ],
+    [
+     "fc_brow_worry",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Brow_Raise_Inner_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_laugh",
+     0.15
+    ],
+    [
+     "ex_sad",
+     0.9
+    ],
+    [
+     "ex_surprise",
+     0.9
+    ],
+    [
+     "ex_fear",
+     1.0
+    ],
+    [
+     "fc_brow_up_R",
+     0.7
+    ],
+    [
+     "fc_brow_worry",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Brow_Raise_Inner_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_laugh",
+     0.15
+    ],
+    [
+     "ls_a",
+     0.85
+    ],
+    [
+     "ls_e",
+     0.35
+    ],
+    [
+     "ls_o",
+     0.45
+    ],
+    [
+     "en_TH",
+     0.15
+    ],
+    [
+     "en_DD",
+     0.2
+    ],
+    [
+     "en_kk",
+     0.35
+    ],
+    [
+     "en_nn",
+     0.25
+    ],
+    [
+     "en_aa",
+     0.9
+    ],
+    [
+     "en_E",
+     0.4
+    ],
+    [
+     "en_O",
+     0.5
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "V_Open"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.9
+    ],
+    [
+     "ex_disgust",
+     0.45
+    ],
+    [
+     "ex_wink_L",
+     0.2
+    ],
+    [
+     "fc_brow_down_L",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Brow_Drop_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.9
+    ],
+    [
+     "ex_disgust",
+     0.45
+    ],
+    [
+     "ex_wink_R",
+     0.2
+    ],
+    [
+     "fc_brow_down_R",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Brow_Drop_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.8
+    ],
+    [
+     "ex_sad",
+     0.25
+    ],
+    [
+     "ex_disgust",
+     0.3
+    ],
+    [
+     "ex_fear",
+     0.5
+    ],
+    [
+     "fc_brow_in",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Brow_Compress_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.8
+    ],
+    [
+     "ex_sad",
+     0.25
+    ],
+    [
+     "ex_disgust",
+     0.3
+    ],
+    [
+     "ex_fear",
+     0.5
+    ],
+    [
+     "fc_brow_in",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Brow_Compress_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.45
+    ],
+    [
+     "ex_disgust",
+     0.85
+    ],
+    [
+     "fc_sneer",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Nose_Sneer_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.45
+    ],
+    [
+     "ex_disgust",
+     0.85
+    ],
+    [
+     "fc_sneer",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Nose_Sneer_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.4
+    ],
+    [
+     "ex_sad",
+     0.15
+    ],
+    [
+     "ex_puff",
+     0.3
+    ],
+    [
+     "fc_press",
+     1.0
+    ],
+    [
+     "en_PP",
+     0.15
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Press_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.4
+    ],
+    [
+     "ex_sad",
+     0.15
+    ],
+    [
+     "ex_smirk",
+     0.1
+    ],
+    [
+     "ex_puff",
+     0.3
+    ],
+    [
+     "fc_press",
+     1.0
+    ],
+    [
+     "en_PP",
+     0.15
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Press_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.35
+    ],
+    [
+     "ex_sad",
+     0.75
+    ],
+    [
+     "ex_disgust",
+     0.3
+    ],
+    [
+     "fc_frown_L",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Frown_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.35
+    ],
+    [
+     "ex_sad",
+     0.75
+    ],
+    [
+     "ex_disgust",
+     0.3
+    ],
+    [
+     "fc_frown_R",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Frown_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.35
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Tighten_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_angry",
+     0.35
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Tighten_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_sad",
+     0.15
+    ],
+    [
+     "ex_wink_L",
+     1.0
+    ],
+    [
+     "fc_blink",
+     1.0
+    ],
+    [
+     "fc_blink_L",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_Blink_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_sad",
+     0.15
+    ],
+    [
+     "ex_wink_R",
+     1.0
+    ],
+    [
+     "fc_blink",
+     1.0
+    ],
+    [
+     "fc_blink_R",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_Blink_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_sad",
+     0.45
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Shrug_Lower"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_surprise",
+     1.0
+    ],
+    [
+     "ex_fear",
+     0.5
+    ],
+    [
+     "fc_brow_up_L",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Brow_Raise_Outer_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_surprise",
+     1.0
+    ],
+    [
+     "ex_fear",
+     0.5
+    ],
+    [
+     "fc_brow_up_R",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Brow_Raise_Outer_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_surprise",
+     0.85
+    ],
+    [
+     "ex_fear",
+     0.8
+    ],
+    [
+     "fc_eye_wide",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_Wide_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_surprise",
+     0.85
+    ],
+    [
+     "ex_fear",
+     0.8
+    ],
+    [
+     "fc_eye_wide",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_Wide_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_surprise",
+     0.2
+    ],
+    [
+     "ex_pout",
+     0.25
+    ],
+    [
+     "fc_funnel",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Funnel_Up_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_surprise",
+     0.2
+    ],
+    [
+     "ex_pout",
+     0.25
+    ],
+    [
+     "fc_funnel",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Funnel_Up_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_surprise",
+     0.2
+    ],
+    [
+     "ex_pout",
+     0.25
+    ],
+    [
+     "ex_tongue",
+     0.15
+    ],
+    [
+     "fc_funnel",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Funnel_Down_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_surprise",
+     0.2
+    ],
+    [
+     "ex_pout",
+     0.25
+    ],
+    [
+     "ex_tongue",
+     0.15
+    ],
+    [
+     "fc_funnel",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Funnel_Down_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_disgust",
+     0.55
+    ],
+    [
+     "fc_upper_lip_up",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Up_Upper_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_disgust",
+     0.55
+    ],
+    [
+     "fc_upper_lip_up",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Up_Upper_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_fear",
+     0.4
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Neck_Tighten_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_fear",
+     0.4
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Neck_Tighten_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_smirk",
+     0.8
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Smile_Sharp_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_pout",
+     0.8
+    ],
+    [
+     "fc_pucker",
+     1.0
+    ],
+    [
+     "en_O",
+     0.15
+    ],
+    [
+     "en_U",
+     0.35
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Pucker_Up_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_pout",
+     0.8
+    ],
+    [
+     "fc_pucker",
+     1.0
+    ],
+    [
+     "en_O",
+     0.15
+    ],
+    [
+     "en_U",
+     0.35
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Pucker_Up_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_pout",
+     0.8
+    ],
+    [
+     "fc_pucker",
+     1.0
+    ],
+    [
+     "en_U",
+     0.35
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Pucker_Down_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_pout",
+     0.8
+    ],
+    [
+     "fc_pucker",
+     1.0
+    ],
+    [
+     "en_U",
+     0.35
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Pucker_Down_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_puff",
+     1.0
+    ],
+    [
+     "fc_cheek_puff",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Cheek_Puff_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_puff",
+     1.0
+    ],
+    [
+     "fc_cheek_puff",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Cheek_Puff_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "fc_lower_lip_down",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Down_Lower_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "fc_lower_lip_down",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_Down_Lower_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "fc_mouth_left",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "fc_mouth_right",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Mouth_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "fc_cheek_suck",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Cheek_Suck_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "fc_cheek_suck",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Cheek_Suck_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ls_a",
+     0.2
+    ],
+    [
+     "ls_i",
+     0.25
+    ],
+    [
+     "ls_e",
+     0.2
+    ],
+    [
+     "en_TH",
+     0.5
+    ],
+    [
+     "en_DD",
+     0.4
+    ],
+    [
+     "en_kk",
+     0.3
+    ],
+    [
+     "en_SS",
+     0.3
+    ],
+    [
+     "en_nn",
+     0.35
+    ],
+    [
+     "en_RR",
+     0.2
+    ],
+    [
+     "en_aa",
+     0.25
+    ],
+    [
+     "en_E",
+     0.2
+    ],
+    [
+     "en_I",
+     0.25
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "V_Lip_Open"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ls_i",
+     0.9
+    ],
+    [
+     "ls_e",
+     0.55
+    ],
+    [
+     "en_DD",
+     0.2
+    ],
+    [
+     "en_SS",
+     0.5
+    ],
+    [
+     "en_E",
+     0.6
+    ],
+    [
+     "en_I",
+     0.95
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "V_Wide"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ls_u",
+     0.95
+    ],
+    [
+     "ls_o",
+     0.55
+    ],
+    [
+     "en_RR",
+     0.5
+    ],
+    [
+     "en_O",
+     0.6
+    ],
+    [
+     "en_U",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "V_Tight_O"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ls_u",
+     0.2
+    ],
+    [
+     "ls_s",
+     0.2
+    ],
+    [
+     "en_SS",
+     0.35
+    ],
+    [
+     "en_RR",
+     0.3
+    ],
+    [
+     "en_U",
+     0.3
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "V_Tight"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ls_m",
+     1.0
+    ],
+    [
+     "en_PP",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "V_Explosive"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ls_f",
+     1.0
+    ],
+    [
+     "en_FF",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "V_Dental_Lip"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ls_s",
+     0.8
+    ],
+    [
+     "en_CH",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "V_Affricate"
+  },
+  {
+   "expr": "max(0,min(1,r*1.79049))",
+   "vars": {
+    "r": null
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Jaw_Open"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "jaw_lr",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Jaw_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "jaw_lr",
+     -1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Jaw_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "jaw_fwd",
+     1.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Jaw_Forward"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "jaw_fwd",
+     -2.0
+    ]
+   ],
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Jaw_Backward"
+  },
+  {
+   "expr": "max(0,min(1,1*r*2.0463))*k",
+   "vars": {
+    "r": null,
+    "k": "eyelid_follow"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_L_Look_L"
+  },
+  {
+   "expr": "max(0,min(1,-1*r*2.0463))*k",
+   "vars": {
+    "r": null,
+    "k": "eyelid_follow"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_L_Look_R"
+  },
+  {
+   "expr": "max(0,min(1,1*r*2.6044))*k",
+   "vars": {
+    "r": null,
+    "k": "eyelid_follow"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_L_Look_Up"
+  },
+  {
+   "expr": "max(0,min(1,-1*r*2.6044))*k",
+   "vars": {
+    "r": null,
+    "k": "eyelid_follow"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_L_Look_Down"
+  },
+  {
+   "expr": "max(0,min(1,1*r*2.0463))*k",
+   "vars": {
+    "r": null,
+    "k": "eyelid_follow"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_R_Look_L"
+  },
+  {
+   "expr": "max(0,min(1,-1*r*2.0463))*k",
+   "vars": {
+    "r": null,
+    "k": "eyelid_follow"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_R_Look_R"
+  },
+  {
+   "expr": "max(0,min(1,1*r*2.6044))*k",
+   "vars": {
+    "r": null,
+    "k": "eyelid_follow"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_R_Look_Up"
+  },
+  {
+   "expr": "max(0,min(1,-1*r*2.6044))*k",
+   "vars": {
+    "r": null,
+    "k": "eyelid_follow"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Eye_R_Look_Down"
+  },
+  {
+   "expr": "max(0,min(1,1*r*1.1459))*k",
+   "vars": {
+    "r": null,
+    "k": "neck_correctives"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Head_Turn_L"
+  },
+  {
+   "expr": "max(0,min(1,-1*r*1.1459))*k",
+   "vars": {
+    "r": null,
+    "k": "neck_correctives"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Head_Turn_R"
+  },
+  {
+   "expr": "max(0,min(1,1*r*1.6370))*k",
+   "vars": {
+    "r": null,
+    "k": "neck_correctives"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Head_Turn_Down"
+  },
+  {
+   "expr": "max(0,min(1,-1*r*1.6370))*k",
+   "vars": {
+    "r": null,
+    "k": "neck_correctives"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Head_Turn_Up"
+  },
+  {
+   "expr": "max(0,min(1,1*r*1.9099))*k",
+   "vars": {
+    "r": null,
+    "k": "neck_correctives"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Head_Tilt_R"
+  },
+  {
+   "expr": "max(0,min(1,-1*r*1.9099))*k",
+   "vars": {
+    "r": null,
+    "k": "neck_correctives"
+   },
+   "linear": false,
+   "objects": [
+    "Body_Collider",
+    "CC_Base_Body"
+   ],
+   "key": "Head_Tilt_L"
+  },
+  {
+   "expr": "max(0,min(1,r*1.79049))",
+   "vars": {
+    "r": null
+   },
+   "linear": false,
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "Jaw_Open"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_tongue",
+     1.0
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "Tongue_Out"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "ex_tongue",
+     0.5
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "Tongue_Down"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "jaw_lr",
+     1.0
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "Jaw_L"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "jaw_lr",
+     -1.0
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "Jaw_R"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "en_TH",
+     0.95
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "V_Tongue_Out"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "en_DD",
+     0.9
+    ],
+    [
+     "en_SS",
+     0.4
+    ],
+    [
+     "en_nn",
+     1.0
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "V_Tongue_up"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "en_kk",
+     0.8
+    ],
+    [
+     "en_CH",
+     0.3
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "V_Tongue_Raise"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "en_SS",
+     0.3
+    ],
+    [
+     "en_nn",
+     0.3
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "V_Tongue_Narrow"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "en_RR",
+     0.6
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "V_Tongue_Curl_U"
+  },
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 1.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "en_aa",
+     0.4
+    ],
+    [
+     "en_E",
+     0.2
+    ]
+   ],
+   "objects": [
+    "CC_Base_Tongue"
+   ],
+   "key": "V_Tongue_Lower"
+  },
+  {
+   "expr": "1.0",
+   "vars": {
+    "k": "sunglasses_low"
+   },
+   "linear": false,
+   "objects": [
+    "OT_Sunglasses"
+   ],
+   "key": "鼻ずらし"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / -0.39450))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • adjustable cuffs"
+   ],
+   "key": "肩の自然なドレープ（左）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / 0.39448))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • adjustable cuffs"
+   ],
+   "key": "肩の自然なドレープ（右）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / -0.39450))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • outer shell"
+   ],
+   "key": "肩の自然なドレープ（左）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / 0.39448))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • outer shell"
+   ],
+   "key": "肩の自然なドレープ（右）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / -0.39450))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • press studs"
+   ],
+   "key": "肩の自然なドレープ（左）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / 0.39448))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • press studs"
+   ],
+   "key": "肩の自然なドレープ（右）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / -0.39450))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • storm fly and pockets"
+   ],
+   "key": "肩の自然なドレープ（左）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / 0.39448))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • storm fly and pockets"
+   ],
+   "key": "肩の自然なドレープ（右）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / -0.39450))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • topstitching"
+   ],
+   "key": "肩の自然なドレープ（左）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / 0.39448))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • topstitching"
+   ],
+   "key": "肩の自然なドレープ（右）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / -0.39450))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • woven labels"
+   ],
+   "key": "肩の自然なドレープ（左）"
+  },
+  {
+   "expr": "r * max(0.0, min(1.0, q / 0.39448))",
+   "vars": {
+    "q": null,
+    "r": "shoulder_relax"
+   },
+   "linear": false,
+   "objects": [
+    "Windbreaker • woven labels"
+   ],
+   "key": "肩の自然なドレープ（右）"
+  }
+ ],
+ "boneDrivers": [
+  {
+   "linear": true,
+   "lo": 0.0,
+   "hi": 0.62,
+   "c": 0.0,
+   "terms": [
+    [
+     "jaw_open",
+     0.5585056
+    ],
+    [
+     "ls_a",
+     0.3141594
+    ],
+    [
+     "ls_i",
+     0.0872665
+    ],
+    [
+     "ls_u",
+     0.1047198
+    ],
+    [
+     "ls_e",
+     0.1919863
+    ],
+    [
+     "ls_o",
+     0.2268929
+    ],
+    [
+     "ls_f",
+     0.0523599
+    ],
+    [
+     "ls_s",
+     0.0523599
+    ],
+    [
+     "ex_laugh",
+     0.2443462
+    ],
+    [
+     "ex_surprise",
+     0.2792528
+    ],
+    [
+     "ex_fear",
+     0.1047198
+    ],
+    [
+     "ex_tongue",
+     0.2967061
+    ],
+    [
+     "en_FF",
+     0.0523599
+    ],
+    [
+     "en_TH",
+     0.1221731
+    ],
+    [
+     "en_DD",
+     0.1047198
+    ],
+    [
+     "en_kk",
+     0.1570797
+    ],
+    [
+     "en_CH",
+     0.0698132
+    ],
+    [
+     "en_SS",
+     0.0523599
+    ],
+    [
+     "en_nn",
+     0.1396264
+    ],
+    [
+     "en_RR",
+     0.1047198
+    ],
+    [
+     "en_aa",
+     0.3316127
+    ],
+    [
+     "en_E",
+     0.1919863
+    ],
+    [
+     "en_I",
+     0.0872665
+    ],
+    [
+     "en_O",
+     0.2443462
+    ],
+    [
+     "en_U",
+     0.0872665
+    ]
+   ],
+   "bone": "MCH_Jaw",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.12,
+   "hi": 0.12,
+   "c": 0.0,
+   "terms": [
+    [
+     "jaw_lr",
+     0.1047198
+    ]
+   ],
+   "bone": "MCH_Jaw",
+   "channel": "rotation_euler",
+   "index": 1
+  },
+  {
+   "linear": true,
+   "lo": -0.3,
+   "hi": 0.5,
+   "c": 0.0,
+   "terms": [
+    [
+     "jaw_fwd",
+     0.45
+    ]
+   ],
+   "bone": "MCH_Jaw",
+   "channel": "location",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_thumb",
+     -0.488692
+    ],
+    [
+     "hand_L_fist",
+     -0.488692
+    ],
+    [
+     "hand_L_relax",
+     -0.1466076
+    ]
+   ],
+   "bone": "MCH_L_Thumb1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.5,
+   "hi": 0.5,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_L_spread",
+     0.174533
+    ],
+    [
+     "hand_L_relax",
+     -0.0872665
+    ]
+   ],
+   "bone": "MCH_L_Thumb1",
+   "channel": "rotation_euler",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_thumb",
+     -0.785398
+    ],
+    [
+     "hand_L_fist",
+     -0.785398
+    ],
+    [
+     "hand_L_relax",
+     -0.2748893
+    ]
+   ],
+   "bone": "MCH_L_Thumb2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_index",
+     -1.309
+    ],
+    [
+     "hand_L_fist",
+     -1.309
+    ],
+    [
+     "hand_L_relax",
+     -0.2618
+    ]
+   ],
+   "bone": "MCH_L_Index1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.5,
+   "hi": 0.5,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_L_spread",
+     0.1396264
+    ],
+    [
+     "hand_L_relax",
+     0.0418879
+    ]
+   ],
+   "bone": "MCH_L_Index1",
+   "channel": "rotation_euler",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_index",
+     -1.65806
+    ],
+    [
+     "hand_L_fist",
+     -1.65806
+    ],
+    [
+     "hand_L_relax",
+     -0.3979344
+    ]
+   ],
+   "bone": "MCH_L_Index2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_middle",
+     -1.36136
+    ],
+    [
+     "hand_L_fist",
+     -1.36136
+    ],
+    [
+     "hand_L_relax",
+     -0.34034
+    ]
+   ],
+   "bone": "MCH_L_Mid1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_middle",
+     -1.71042
+    ],
+    [
+     "hand_L_fist",
+     -1.71042
+    ],
+    [
+     "hand_L_relax",
+     -0.4789176
+    ]
+   ],
+   "bone": "MCH_L_Mid2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_ring",
+     -1.36136
+    ],
+    [
+     "hand_L_fist",
+     -1.36136
+    ],
+    [
+     "hand_L_relax",
+     -0.408408
+    ]
+   ],
+   "bone": "MCH_L_Ring1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.5,
+   "hi": 0.5,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_spread",
+     -0.1047198
+    ],
+    [
+     "hand_L_relax",
+     -0.0314159
+    ]
+   ],
+   "bone": "MCH_L_Ring1",
+   "channel": "rotation_euler",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_ring",
+     -1.71042
+    ],
+    [
+     "hand_L_fist",
+     -1.71042
+    ],
+    [
+     "hand_L_relax",
+     -0.5473344
+    ]
+   ],
+   "bone": "MCH_L_Ring2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_pinky",
+     -1.39626
+    ],
+    [
+     "hand_L_fist",
+     -1.39626
+    ],
+    [
+     "hand_L_relax",
+     -0.4747284
+    ]
+   ],
+   "bone": "MCH_L_Pinky1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.5,
+   "hi": 0.5,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_spread",
+     -0.2094396
+    ],
+    [
+     "hand_L_relax",
+     -0.0628319
+    ]
+   ],
+   "bone": "MCH_L_Pinky1",
+   "channel": "rotation_euler",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_L_pinky",
+     -1.74533
+    ],
+    [
+     "hand_L_fist",
+     -1.74533
+    ],
+    [
+     "hand_L_relax",
+     -0.5934122
+    ]
+   ],
+   "bone": "MCH_L_Pinky2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_thumb",
+     0.488692
+    ],
+    [
+     "hand_R_fist",
+     0.488692
+    ],
+    [
+     "hand_R_relax",
+     0.1466076
+    ]
+   ],
+   "bone": "MCH_R_Thumb1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.5,
+   "hi": 0.5,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_spread",
+     0.174533
+    ],
+    [
+     "hand_R_relax",
+     -0.0872665
+    ]
+   ],
+   "bone": "MCH_R_Thumb1",
+   "channel": "rotation_euler",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_thumb",
+     0.785398
+    ],
+    [
+     "hand_R_fist",
+     0.785398
+    ],
+    [
+     "hand_R_relax",
+     0.2748893
+    ]
+   ],
+   "bone": "MCH_R_Thumb2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_index",
+     1.309
+    ],
+    [
+     "hand_R_fist",
+     1.309
+    ],
+    [
+     "hand_R_relax",
+     0.2618
+    ]
+   ],
+   "bone": "MCH_R_Index1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.5,
+   "hi": 0.5,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_spread",
+     0.1396264
+    ],
+    [
+     "hand_R_relax",
+     0.0418879
+    ]
+   ],
+   "bone": "MCH_R_Index1",
+   "channel": "rotation_euler",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_index",
+     1.65806
+    ],
+    [
+     "hand_R_fist",
+     1.65806
+    ],
+    [
+     "hand_R_relax",
+     0.3979344
+    ]
+   ],
+   "bone": "MCH_R_Index2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_middle",
+     1.36136
+    ],
+    [
+     "hand_R_fist",
+     1.36136
+    ],
+    [
+     "hand_R_relax",
+     0.34034
+    ]
+   ],
+   "bone": "MCH_R_Mid1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_middle",
+     1.71042
+    ],
+    [
+     "hand_R_fist",
+     1.71042
+    ],
+    [
+     "hand_R_relax",
+     0.4789176
+    ]
+   ],
+   "bone": "MCH_R_Mid2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_ring",
+     1.36136
+    ],
+    [
+     "hand_R_fist",
+     1.36136
+    ],
+    [
+     "hand_R_relax",
+     0.408408
+    ]
+   ],
+   "bone": "MCH_R_Ring1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.5,
+   "hi": 0.5,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_R_spread",
+     -0.1047198
+    ],
+    [
+     "hand_R_relax",
+     -0.0314159
+    ]
+   ],
+   "bone": "MCH_R_Ring1",
+   "channel": "rotation_euler",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_ring",
+     1.71042
+    ],
+    [
+     "hand_R_fist",
+     1.71042
+    ],
+    [
+     "hand_R_relax",
+     0.5473344
+    ]
+   ],
+   "bone": "MCH_R_Ring2",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_pinky",
+     1.39626
+    ],
+    [
+     "hand_R_fist",
+     1.39626
+    ],
+    [
+     "hand_R_relax",
+     0.4747284
+    ]
+   ],
+   "bone": "MCH_R_Pinky1",
+   "channel": "rotation_euler",
+   "index": 2
+  },
+  {
+   "linear": true,
+   "lo": -0.5,
+   "hi": 0.5,
+   "c": -0.0,
+   "terms": [
+    [
+     "hand_R_spread",
+     -0.2094396
+    ],
+    [
+     "hand_R_relax",
+     -0.0628319
+    ]
+   ],
+   "bone": "MCH_R_Pinky1",
+   "channel": "rotation_euler",
+   "index": 0
+  },
+  {
+   "linear": true,
+   "lo": -2.0,
+   "hi": 2.0,
+   "c": 0.0,
+   "terms": [
+    [
+     "hand_R_pinky",
+     1.74533
+    ],
+    [
+     "hand_R_fist",
+     1.74533
+    ],
+    [
+     "hand_R_relax",
+     0.5934122
+    ]
+   ],
+   "bone": "MCH_R_Pinky2",
+   "channel": "rotation_euler",
+   "index": 2
+  }
+ ],
+ "defaultPose": {
+  "CC_Base_L_Upperarm": {
+   "q": [
+    0.918476402759552,
+    0.02239862084388733,
+    -0.016507312655448914,
+    -0.3944958448410034
+   ],
+   "loc": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  "CC_Base_L_Forearm": {
+   "q": [
+    0.9975640773773193,
+    0.06787577271461487,
+    -0.016075462102890015,
+    0.0006465204060077667
+   ],
+   "loc": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  "CC_Base_R_Upperarm": {
+   "q": [
+    0.9184764623641968,
+    0.022340893745422363,
+    0.016848504543304443,
+    0.39448466897010803
+   ],
+   "loc": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  "CC_Base_R_Forearm": {
+   "q": [
+    0.9986295104026794,
+    0.05086830258369446,
+    0.012297373265028,
+    -0.0005006380379199982
+   ],
+   "loc": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "constraints": [
+  {
+   "bone": "CC_Base_L_ThighTwist01",
+   "from": "CC_Base_L_Thigh",
+   "inf": 0.4999999403953552,
+   "mix": "ADD",
+   "axes": [
+    false,
+    true,
+    false
+   ],
+   "inv": [
+    false,
+    true,
+    false
+   ],
+   "order": "YXZ",
+   "name": "Auto twist"
+  },
+  {
+   "bone": "CC_Base_R_ThighTwist01",
+   "from": "CC_Base_R_Thigh",
+   "inf": 0.4999999403953552,
+   "mix": "ADD",
+   "axes": [
+    false,
+    true,
+    false
+   ],
+   "inv": [
+    false,
+    true,
+    false
+   ],
+   "order": "YXZ",
+   "name": "Auto twist"
+  },
+  {
+   "bone": "CC_Base_NeckTwist01",
+   "from": "CTRL_Head",
+   "inf": 0.30000001192092896,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Head control"
+  },
+  {
+   "bone": "CC_Base_NeckTwist02",
+   "from": "CTRL_Head",
+   "inf": 0.30000001192092896,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Head control"
+  },
+  {
+   "bone": "CC_Base_Head",
+   "from": "CTRL_Head",
+   "inf": 0.4000000059604645,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Head control"
+  },
+  {
+   "bone": "CC_Base_JawRoot",
+   "from": "MCH_Jaw",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Jaw (controls)"
+  },
+  {
+   "bone": "CC_Base_JawRoot",
+   "from": "MCH_Jaw",
+   "inf": 1.0,
+   "type": "loc",
+   "name": "Jaw fwd (controls)"
+  },
+  {
+   "bone": "CC_Base_L_ForearmTwist01",
+   "from": "CC_Base_L_Hand",
+   "inf": 0.4999999403953552,
+   "mix": "ADD",
+   "axes": [
+    false,
+    true,
+    false
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "YXZ",
+   "name": "Auto twist"
+  },
+  {
+   "bone": "CC_Base_L_Pinky1",
+   "from": "MCH_L_Pinky1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Pinky2",
+   "from": "MCH_L_Pinky2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Ring1",
+   "from": "MCH_L_Ring1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Ring2",
+   "from": "MCH_L_Ring2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Mid1",
+   "from": "MCH_L_Mid1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Mid2",
+   "from": "MCH_L_Mid2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Index1",
+   "from": "MCH_L_Index1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Index2",
+   "from": "MCH_L_Index2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Thumb1",
+   "from": "MCH_L_Thumb1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_Thumb2",
+   "from": "MCH_L_Thumb2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_L_UpperarmTwist01",
+   "from": "CC_Base_L_Upperarm",
+   "inf": 0.4999999403953552,
+   "mix": "ADD",
+   "axes": [
+    false,
+    true,
+    false
+   ],
+   "inv": [
+    false,
+    true,
+    false
+   ],
+   "order": "YXZ",
+   "name": "Auto twist"
+  },
+  {
+   "bone": "CC_Base_R_ForearmTwist01",
+   "from": "CC_Base_R_Hand",
+   "inf": 0.4999999403953552,
+   "mix": "ADD",
+   "axes": [
+    false,
+    true,
+    false
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "YXZ",
+   "name": "Auto twist"
+  },
+  {
+   "bone": "CC_Base_R_Ring1",
+   "from": "MCH_R_Ring1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Ring2",
+   "from": "MCH_R_Ring2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Mid1",
+   "from": "MCH_R_Mid1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Mid2",
+   "from": "MCH_R_Mid2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Thumb1",
+   "from": "MCH_R_Thumb1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Thumb2",
+   "from": "MCH_R_Thumb2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Index1",
+   "from": "MCH_R_Index1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Index2",
+   "from": "MCH_R_Index2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Pinky1",
+   "from": "MCH_R_Pinky1",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_Pinky2",
+   "from": "MCH_R_Pinky2",
+   "inf": 1.0,
+   "mix": "ADD",
+   "axes": [
+    true,
+    true,
+    true
+   ],
+   "inv": [
+    false,
+    false,
+    false
+   ],
+   "order": "AUTO",
+   "name": "Finger controls"
+  },
+  {
+   "bone": "CC_Base_R_UpperarmTwist01",
+   "from": "CC_Base_R_Upperarm",
+   "inf": 0.4999999403953552,
+   "mix": "ADD",
+   "axes": [
+    false,
+    true,
+    false
+   ],
+   "inv": [
+    false,
+    true,
+    false
+   ],
+   "order": "YXZ",
+   "name": "Auto twist"
+  }
+ ],
+ "mchRotationModes": {
+  "MCH_Jaw": "XYZ",
+  "CTRL_Eyes": "QUATERNION",
+  "CTRL_Eye.L": "QUATERNION",
+  "CTRL_Eye.R": "QUATERNION",
+  "MCH_L_Pinky2": "XYZ",
+  "MCH_L_Ring2": "XYZ",
+  "MCH_L_Mid2": "XYZ",
+  "MCH_L_Index2": "XYZ",
+  "MCH_L_Thumb2": "XYZ",
+  "MCH_L_Thumb1": "XYZ",
+  "MCH_L_Index1": "XYZ",
+  "MCH_L_Mid1": "XYZ",
+  "MCH_L_Ring1": "XYZ",
+  "MCH_L_Pinky1": "XYZ",
+  "MCH_R_Ring2": "XYZ",
+  "MCH_R_Mid2": "XYZ",
+  "MCH_R_Thumb2": "XYZ",
+  "MCH_R_Index2": "XYZ",
+  "MCH_R_Pinky2": "XYZ",
+  "MCH_R_Thumb1": "XYZ",
+  "MCH_R_Index1": "XYZ",
+  "MCH_R_Mid1": "XYZ",
+  "MCH_R_Ring1": "XYZ",
+  "MCH_R_Pinky1": "XYZ",
+  "CTRL_Head": "XYZ",
+  "MCH_HeadAim": "QUATERNION"
+ }
+}

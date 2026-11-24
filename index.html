@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#14081f">
+<title>JACKET CAM — VTuber</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%235a2a9c%22/%3E%3Cpath d=%22M6 13h20v5H6z%22 fill=%22%23c8143c%22/%3E%3Ccircle cx=%2211%22 cy=%2215.5%22 r=%223%22/%3E%3Ccircle cx=%2221%22 cy=%2215.5%22 r=%223%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a pocket VTuber booth — loud jacket colours, quick thumbs-only controls.
+   IDEA: the two jackets' own palettes (berry/crocus vs mont-bell) are the UI.
+   PICTURE: the avatar on stage, full bleed; controls float on a glass dock.
+   COLOUR: crocus violet #5a2a9c ground, berry #c8143c, sunflower #f6c21a accent.
+   TYPE: Dela Gothic One for the logo, M PLUS Rounded 1c for everything else. */
+:root{--bg:#14081f;--ink:#fff7ee;--muted:#c9bcd9;--violet:#5a2a9c;--berry:#c8143c;--sun:#f6c21a;--glass:rgba(22,10,34,.78);--line:rgba(255,255,255,.14);--r:18px;
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:500 15px/1.45 "M PLUS Rounded 1c",system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
+button,input,select{font:inherit;color:inherit}
+#stage{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.top{position:fixed;left:0;right:0;top:0;padding:calc(10px + var(--safe-t)) 14px 0;display:flex;align-items:center;gap:10px;pointer-events:none;z-index:5}
+.logo{white-space:nowrap;flex:none;font-family:"Dela Gothic One",sans-serif;font-size:19px;letter-spacing:.02em;line-height:1;padding:8px 12px;border-radius:12px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.logo b{color:var(--sun);font-weight:400}
+.chip{pointer-events:auto;display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:13px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#777}
+.dot.on{background:#3ee07a;box-shadow:0 0 8px #3ee07a}.dot.rec{background:#ff3b5c;box-shadow:0 0 10px #ff3b5c;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.35}}
+.spacer{flex:1}
+#pip{position:fixed;right:12px;top:calc(56px + var(--safe-t));width:108px;aspect-ratio:3/4;border-radius:14px;overflow:hidden;border:2px solid rgba(255,255,255,.5);background:#000;z-index:4;display:none}
+#pip video{width:100%;height:100%;object-fit:cover}
+#pip.mirror video{transform:scaleX(-1)}
+/* dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:0 10px calc(10px + var(--safe-b));pointer-events:none}
+.dock-inner{max-width:760px;margin:0 auto;pointer-events:auto;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.panel{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.dock.open .panel{max-height:min(46vh,380px);overflow-y:auto}
+.pane{display:none;padding:14px 14px 6px}
+.pane.on{display:block}
+.bar{display:flex;align-items:center;gap:6px;padding:8px;border-top:1px solid var(--line)}
+.dock:not(.open) .bar{border-top:0}
+.tabs{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 0 auto;min-height:44px;padding:0 8px;border:0;border-radius:14px;background:transparent;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer}
+.tab.on{background:rgba(255,255,255,.12);color:var(--ink)}
+.fab{position:fixed;right:12px;z-index:6;display:flex;flex-direction:column;gap:10px;bottom:calc(var(--dockH,80px) + 14px);transition:bottom .28s ease}
+.icon{width:52px;height:52px;flex:none;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer}
+.icon svg{width:22px;height:22px}
+.icon.rec{background:var(--berry);border-color:var(--berry)}
+.icon.rec.live{background:#fff}.icon.rec.live svg{fill:var(--berry)}
+h3{margin:2px 0 10px;font-size:13px;font-weight:700;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.btn{min-height:44px;padding:0 16px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.07);font-weight:700;cursor:pointer}
+.btn.on{background:var(--ink);color:#1a0d24;border-color:var(--ink)}
+.btn:focus-visible,.tab:focus-visible,.icon:focus-visible,.card:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.card{position:relative;border-radius:16px;border:2px solid transparent;padding:12px;min-height:92px;text-align:left;cursor:pointer;background:rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:space-between}
+.card.on{border-color:var(--sun)}
+.card strong{font-size:16px}
+.card small{color:var(--muted);font-size:12px}
+.sw{display:flex;gap:4px}.sw i{width:22px;height:22px;border-radius:6px;display:block;border:1px solid rgba(0,0,0,.25)}
+.bgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-bottom:12px}
+.bg{aspect-ratio:3/2;border-radius:12px;border:2px solid transparent;background-size:cover;background-position:center;cursor:pointer;position:relative;display:flex;align-items:flex-end;padding:6px;font-size:12px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.bg.on{border-color:var(--sun)}
+.bg.up{background:repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0 8px,transparent 8px 16px);border:2px dashed rgba(255,255,255,.35);align-items:center;justify-content:center;text-align:center}
+.sl{display:grid;grid-template-columns:7.5em minmax(0,1fr) 2.6em;align-items:center;gap:8px;margin:4px 0;font-size:13px}
+.sl output{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--sun);height:32px}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media(max-width:560px){.cols{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--muted);margin:2px 0 12px}
+.meter{height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden;flex:1;min-width:80px;align-self:center}
+.meter i{display:block;height:100%;width:0;background:var(--sun)}
+/* start overlay */
+#start{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:24px;background:radial-gradient(120% 80% at 50% 0%,rgba(90,42,156,.55),rgba(20,8,31,.92) 60%),rgba(20,8,31,.6)}
+#start .box{max-width:420px;width:100%;text-align:center}
+#start h1{font-family:"Dela Gothic One",sans-serif;font-weight:400;font-size:clamp(34px,10vw,48px);line-height:1.05;margin:0 0 6px;text-wrap:balance}
+#start h1 span{color:var(--sun)}
+#start p{color:var(--muted);margin:0 0 20px}
+.go{width:100%;min-height:56px;border:0;border-radius:18px;background:var(--sun);color:#1a0d24;font-weight:800;font-size:17px;cursor:pointer;margin-bottom:10px}
+.go.sec{background:rgba(255,255,255,.1);color:var(--ink);font-weight:700}
+.go:disabled{opacity:.5}
+.prog{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;margin:18px 0 8px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--berry),var(--sun));transition:width .2s}
+#msg{font-size:13px;color:var(--muted);min-height:1.4em}
+.fine{font-size:11.5px;color:rgba(255,255,255,.5);margin-top:14px}
+#toast{position:fixed;left:50%;top:calc(64px + var(--safe-t));transform:translateX(-50%);z-index:30;padding:10px 16px;border-radius:14px;background:var(--glass);font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.panel{transition:none}.dot.rec{animation:none}}
+</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.min.js", "three/addons/": "./vendor/three/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div class="top">
+  <div class="logo">JACKET <b>CAM</b></div>
+  <div class="spacer"></div>
+  <div class="chip" id="trackChip"><span class="dot" id="trackDot"></span><span id="trackTxt">カメラ オフ</span></div>
+  <div class="chip" id="recChip" hidden><span class="dot rec"></span><span id="recTime">0:00</span></div>
+</div>
+<div id="pip" class="mirror"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div class="fab" id="fab">
+  <button class="icon" id="shotBtn" aria-label="写真を保存"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+  <button class="icon rec" id="recBtn" aria-label="録画"><svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="6"/></svg></button>
+</div>
+<div class="dock" id="dock">
+  <div class="dock-inner">
+    <div class="panel" id="panel">
+      <section class="pane on" data-pane="jacket">
+        <h3>ジャケット</h3>
+        <div class="cards">
+          <button class="card" data-jacket="ot" aria-pressed="false">
+            <span class="sw"><i style="background:#c8143c"></i><i style="background:#5a2a9c"></i><i style="background:#f6c21a"></i><i style="background:#0f3a2c"></i></span>
+            <span><strong>Oliver Tree</strong><br><small>ウインドブレーカー</small></span>
+          </button>
+          <button class="card" data-jacket="mb" aria-pressed="false">
+            <span class="sw" id="mbSw"><i style="background:#3b48a3"></i><i style="background:#b8406f"></i><i style="background:#e8c65a"></i></span>
+            <span><strong>mont-bell</strong><br><small>アウトドアジャケット</small></span>
+          </button>
+        </div>
+        <h3>サングラス</h3>
+        <div class="row" id="glassesRow">
+          <button class="btn" data-glasses="on">かける</button>
+          <button class="btn" data-glasses="low">鼻にずらす</button>
+          <button class="btn" data-glasses="off">外す</button>
+        </div>
+      </section>
+
+      <section class="pane" data-pane="bg">
+        <h3>背景</h3>
+        <div class="bgs" id="bgGrid">
+          <label class="bg up" id="bgUpload" tabindex="0">好きな写真を選ぶ<input type="file" accept="image/*" id="bgFile" hidden></label>
+        </div>
+        <p class="note">選んだ写真はこの端末のブラウザにだけ保存されます。</p>
+      </section>
+
+      <section class="pane" data-pane="face">
+        <h3>表情プリセット（タップでオン／オフ）</h3>
+        <div class="row" id="exRow"></div>
+        <h3>口パク（リップシンク）</h3>
+        <div class="row">
+          <button class="btn" id="micBtn">マイクで口パク</button>
+          <span class="meter" aria-hidden="true"><i id="micMeter"></i></span>
+        </div>
+        <div class="row" id="vowelRow"></div>
+        <p class="note">カメラの口の動きはいつでも反映されます。マイクを使うと声の「あいうえお」でも口が動きます。</p>
+      </section>
+
+      <section class="pane" data-pane="hands">
+        <h3>トラッキング</h3>
+        <div class="row">
+          <button class="btn" id="handsBtn">手と指を追う</button>
+          <button class="btn" id="armsBtn">腕を追う</button>
+        </div>
+        <h3>手のポーズ（カメラに手が映っていない時）</h3>
+        <div class="row" id="poseRow"></div>
+        <div class="cols" id="fingerCols"></div>
+      </section>
+
+      <section class="pane" data-pane="set">
+        <h3>画角</h3>
+        <div class="row" id="frameRow">
+          <button class="btn" data-frame="face">顔</button>
+          <button class="btn" data-frame="bust">上半身</button>
+          <button class="btn" data-frame="full">全身</button>
+        </div>
+        <h3>動き</h3>
+        <div class="row">
+          <button class="btn" id="mirrorBtn">ミラー（鏡のように動く）</button>
+          <button class="btn" id="hairBtn">髪の物理</button>
+          <button class="btn" id="calBtn">今の顔を正面にする</button>
+          <button class="btn" id="pipBtn">カメラ映像を表示</button>
+        </div>
+        <h3>髪の本数（重い時は軽く）</h3>
+        <div class="row" id="qualRow">
+          <button class="btn" data-q="0">軽量</button>
+          <button class="btn" data-q="1">標準</button>
+          <button class="btn" data-q="2">高画質</button>
+        </div>
+        <h3>リグの補正</h3>
+        <div id="rigSliders"></div>
+        <p class="note">表情・指・あご・視線・首の補正・ジャケットの肩のドレープは、blendファイルのOTリグと同じ式で動いています。非公式のファンメイド・アバターです。</p>
+      </section>
+    </div>
+    <div class="bar">
+      <div class="tabs" role="tablist">
+        <button class="tab on" data-tab="jacket">ジャケット</button>
+        <button class="tab" data-tab="bg">背景</button>
+        <button class="tab" data-tab="face">表情</button>
+        <button class="tab" data-tab="hands">手・指</button>
+        <button class="tab" data-tab="set">設定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="start">
+  <div class="box">
+    <h1>JACKET <span>CAM</span></h1>
+    <p>カメラに映ったあなたの顔・口・手の動きで、3Dアバターが動きます。ジャケットと背景は自由に切り替え。</p>
+    <div class="prog"><i id="prog"></i></div>
+    <div id="msg">アバターを読み込み中…</div>
+    <button class="go" id="goCam" disabled>カメラでスタート</button>
+    <button class="go sec" id="goNoCam" disabled>カメラなしで見る</button>
+    <p class="fine">カメラ映像はこの端末の中だけで処理され、どこにも送信・保存されません。<br>非公式のファンメイド・アバターです。</p>
+  </div>
+</div>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
